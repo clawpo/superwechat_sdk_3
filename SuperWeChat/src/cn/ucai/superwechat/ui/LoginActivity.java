@@ -17,7 +17,7 @@ import com.easemob.redpacketsdk.RPCallback;
 import com.easemob.redpacketsdk.RedPacket;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.DemoApplication;
+import cn.ucai.superwechat.SuperWeChatApplication;
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.db.DemoDBManager;
@@ -153,7 +153,7 @@ public class LoginActivity extends BaseActivity {
 				
 				// 更新当前用户的nickname 此方法的作用是在ios离线推送时能够显示用户nick
 				boolean updatenick = EMClient.getInstance().updateCurrentUserNick(
-						DemoApplication.currentUserNick.trim());
+						SuperWeChatApplication.currentUserNick.trim());
 				if (!updatenick) {
 					Log.e("LoginActivity", "update current user nick fail");
 				}
