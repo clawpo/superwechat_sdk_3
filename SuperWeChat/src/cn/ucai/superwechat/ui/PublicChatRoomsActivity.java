@@ -242,7 +242,7 @@ public class PublicChatRoomsActivity extends BaseActivity {
                             isLoading = false;
                             pb.setVisibility(View.INVISIBLE);
                             footLoadingLayout.setVisibility(View.GONE);
-                            Toast.makeText(PublicChatRoomsActivity.this, getResources().getString(R.string.failed_to_load_data), 0).show();
+                            Toast.makeText(PublicChatRoomsActivity.this, getResources().getString(R.string.failed_to_load_data), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

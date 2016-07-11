@@ -162,7 +162,7 @@ public class PublicGroupsActivity extends BaseActivity {
                             isLoading = false;
                             pb.setVisibility(View.INVISIBLE);
                             footLoadingLayout.setVisibility(View.GONE);
-                            Toast.makeText(PublicGroupsActivity.this, "加载数据失败，请检查网络或稍后重试", 0).show();
+                            Toast.makeText(PublicGroupsActivity.this, "加载数据失败，请检查网络或稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

@@ -49,7 +49,7 @@ public class ConversationListFragment extends EaseConversationListFragment{
                 EMConversation conversation = conversationListView.getItem(position);
                 String username = conversation.getUserName();
                 if (username.equals(EMClient.getInstance().getCurrentUser()))
-                    Toast.makeText(getActivity(), R.string.Cant_chat_with_yourself, 0).show();
+                    Toast.makeText(getActivity(), R.string.Cant_chat_with_yourself, Toast.LENGTH_SHORT).show();
                 else {
                     // 进入聊天页面
                     Intent intent = new Intent(getActivity(), ChatActivity.class);

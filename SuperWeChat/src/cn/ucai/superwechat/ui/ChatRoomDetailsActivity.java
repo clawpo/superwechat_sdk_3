@@ -232,7 +232,7 @@ public class ChatRoomDetailsActivity extends BaseActivity implements OnClickList
 		if (conversation != null) {
 			conversation.clearAllMessages();
 		}
-		Toast.makeText(this, R.string.messages_are_empty, 0).show();
+		Toast.makeText(this, R.string.messages_are_empty, Toast.LENGTH_SHORT).show();
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class ChatRoomDetailsActivity extends BaseActivity implements OnClickList
 					runOnUiThread(new Runnable() {
 						public void run() {
 							progressDialog.dismiss();
-							Toast.makeText(getApplicationContext(), "退出聊天室失败: " + e.getMessage(), 1).show();
+							Toast.makeText(getApplicationContext(), "退出聊天室失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
 						}
 					});
 				}
@@ -440,7 +440,7 @@ public class ChatRoomDetailsActivity extends BaseActivity implements OnClickList
 								return;
 							}
 							if (!NetUtils.hasNetwork(getApplicationContext())) {
-								Toast.makeText(getApplicationContext(), getString(R.string.network_unavailable), 0).show();
+								Toast.makeText(getApplicationContext(), getString(R.string.network_unavailable), Toast.LENGTH_SHORT).show();
 								return;
 							}
 							EMLog.d("room", "remove user from room:" + username);

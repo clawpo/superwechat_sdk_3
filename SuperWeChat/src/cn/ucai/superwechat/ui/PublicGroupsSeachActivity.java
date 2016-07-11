@@ -69,9 +69,9 @@ public class PublicGroupsSeachActivity extends BaseActivity{
                             searchedGroup = null;
                             containerLayout.setVisibility(View.GONE);
                             if(e.getErrorCode() == EMError.GROUP_INVALID_ID){
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.group_not_existed), 0).show();
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.group_not_existed), Toast.LENGTH_SHORT).show();
                             }else{
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.group_search_failed) + " : " + getString(R.string.connect_failuer_toast), 0).show();
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.group_search_failed) + " : " + getString(R.string.connect_failuer_toast), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

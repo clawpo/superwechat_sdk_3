@@ -251,7 +251,7 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
         if (chatType == Constant.CHATTYPE_GROUP) {
             EMGroup group = EMClient.getInstance().groupManager().getGroup(toChatUsername);
             if (group == null) {
-                Toast.makeText(getActivity(), R.string.gorup_not_found, 0).show();
+                Toast.makeText(getActivity(), R.string.gorup_not_found, Toast.LENGTH_SHORT).show();
                 return;
             }
             startActivityForResult(
@@ -356,7 +356,7 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
      */
     protected void startVoiceCall() {
         if (!EMClient.getInstance().isConnected()) {
-            Toast.makeText(getActivity(), R.string.not_connect_to_server, 0).show();
+            Toast.makeText(getActivity(), R.string.not_connect_to_server, Toast.LENGTH_SHORT).show();
         } else {
             startActivity(new Intent(getActivity(), VoiceCallActivity.class).putExtra("username", toChatUsername)
                     .putExtra("isComingCall", false));
@@ -370,7 +370,7 @@ public class ChatFragment extends EaseChatFragment implements EaseChatFragmentHe
      */
     protected void startVideoCall() {
         if (!EMClient.getInstance().isConnected())
-            Toast.makeText(getActivity(), R.string.not_connect_to_server, 0).show();
+            Toast.makeText(getActivity(), R.string.not_connect_to_server, Toast.LENGTH_SHORT).show();
         else {
             startActivity(new Intent(getActivity(), VideoCallActivity.class).putExtra("username", toChatUsername)
                     .putExtra("isComingCall", false));

@@ -209,14 +209,14 @@ public class VoiceCallActivity extends CallActivity implements OnClickListener {
                 case VOICE_PAUSE:
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "VOICE_PAUSE", 0).show();
+                            Toast.makeText(getApplicationContext(), "VOICE_PAUSE", Toast.LENGTH_SHORT).show();
                         }
                     });
                     break;
                 case VOICE_RESUME:
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            Toast.makeText(getApplicationContext(), "VOICE_RESUME", 0).show();
+                            Toast.makeText(getApplicationContext(), "VOICE_RESUME", Toast.LENGTH_SHORT).show();
                         }
                     });
                     break;
