@@ -74,7 +74,9 @@ public interface I {
     int AVATAR_TYPE_GROUP							        =		1;								//群组头像
     int GROUP_PUBLIC								        =		1;								//公开群组
     int GROUP_NO_PUBLIC								        =		0;								//非公开群组
-    String BACKSLASH								        = 		"/";							//反斜杠
+    String SLASH    								        = 		"/";							//斜杠
+    String QUESTION                                         =       "?";                            //问号
+    String AMPERSAND                                        =       "&";                            //and
     String AVATAR_TYPE_USER_PATH					        = 		"user_avatar";					//用户头像保存目录
     String AVATAR_TYPE_GROUP_PATH 					        =		"group_icon";					//群组头像保存目录
     String AVATAR_SUFFIX_PNG						        =		".png";							//PNG图片后缀名
@@ -141,7 +143,7 @@ public interface I {
     /** 客户端发送的登陆请求 */
     String REQUEST_LOGIN 							        = 		"login";
     /** 客户端发送的下载用户头像请求 */
-    String REQUEST_DOWNLOAD_AVATAR	 				        = 		"download_avatar";
+    String REQUEST_DOWNLOAD_AVATAR	 				        = 		"downloadAvatar";
     /** 客户端发送的下载联系人所有集合请求 */
     String REQUEST_DOWNLOAD_CONTACT_ALL_LIST 		        = 		"download_contact_all_list";
     /** 客户端发送的下载联系人集合请求 */
@@ -194,4 +196,6 @@ public interface I {
     String REQUEST_FIND_GROUP_BY_HXID 				        = 		"find_group_by_group_hxid";
     /** 客户端发送的根据群组环信id查找公开群组请求 */
     String REQUEST_FIND_PUBLIC_GROUP_BY_HXID 		        = 		"find_public_group_by_group_hxid";
+    /** 远端服务器地址 */
+    String SERVER_ROOT = "http://120.26.242.249:8080/SuperWeChatServerV2.0/";
 }
