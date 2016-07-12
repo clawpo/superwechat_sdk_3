@@ -14,6 +14,7 @@
 package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -26,50 +27,88 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
 import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.listener.OnSetAvatarListener;
 
 /**
  * 注册页
  * 
  */
 public class RegisterActivity extends BaseActivity {
+    private static final String TAG = RegisterActivity.class.getSimpleName();
+    private RegisterActivity mContext;
 	private EditText userNameEditText;
 	private EditText userNickEditText;
 	private EditText passwordEditText;
 	private EditText confirmPwdEditText;
 	private ImageView avatar;
+    private OnSetAvatarListener mOnSetAvatarListener;
+    private String avatarName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.em_activity_register);
+        mContext = this;
 		userNameEditText = (EditText) findViewById(R.id.username);
         userNickEditText = (EditText) findViewById(R.id.nick);
 		passwordEditText = (EditText) findViewById(R.id.password);
 		confirmPwdEditText = (EditText) findViewById(R.id.confirm_password);
         avatar = (ImageView) findViewById(R.id.iv_avatar);
+        setListener();
+	}
+
+    private void setListener() {
         findViewById(R.id.btn_login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-	}
+        findViewById(R.id.layout_user_avatar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mOnSetAvatarListener = new OnSetAvatarListener(mContext,R.id.layout_register,getAvatarName(), I.AVATAR_TYPE_USER_PATH);
+            }
+        });
+    }
 
-	/**
+    private String getAvatarName(){
+        avatarName = String.valueOf(System.currentTimeMillis());
+        return avatarName;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode!=RESULT_OK)return;
+        mOnSetAvatarListener.setAvatar(requestCode,data,avatar);
+    }
+
+    /**
 	 * 注册
 	 * 
 	 * @param view
 	 */
 	public void register(View view) {
 		final String username = userNameEditText.getText().toString().trim();
+        final String nick = userNickEditText.getText().toString().trim();
 		final String pwd = passwordEditText.getText().toString().trim();
 		String confirm_pwd = confirmPwdEditText.getText().toString().trim();
 		if (TextUtils.isEmpty(username)) {
 			Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_empty), Toast.LENGTH_SHORT).show();
 			userNameEditText.requestFocus();
 			return;
-		} else if (TextUtils.isEmpty(pwd)) {
+		} else if (!username.matches("[\\w][\\w\\d_]+")) {
+            Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_wd), Toast.LENGTH_SHORT).show();
+            userNameEditText.requestFocus();
+            return;
+        }  else if (TextUtils.isEmpty(nick)) {
+            Toast.makeText(this, getResources().getString(R.string.toast_nick_not_isnull), Toast.LENGTH_SHORT).show();
+            userNickEditText.requestFocus();
+            return;
+        } else if (TextUtils.isEmpty(pwd)) {
 			Toast.makeText(this, getResources().getString(R.string.Password_cannot_be_empty), Toast.LENGTH_SHORT).show();
 			passwordEditText.requestFocus();
 			return;
