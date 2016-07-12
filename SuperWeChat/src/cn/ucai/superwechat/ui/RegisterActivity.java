@@ -13,18 +13,20 @@
  */
 package cn.ucai.superwechat.ui;
 
-import com.hyphenate.EMError;
-import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.DemoHelper;
-import cn.ucai.superwechat.R;
-import com.hyphenate.exceptions.HyphenateException;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.hyphenate.EMError;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.exceptions.HyphenateException;
+
+import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.R;
 
 /**
  * 注册页
@@ -32,16 +34,26 @@ import android.widget.Toast;
  */
 public class RegisterActivity extends BaseActivity {
 	private EditText userNameEditText;
+	private EditText userNickEditText;
 	private EditText passwordEditText;
 	private EditText confirmPwdEditText;
+	private ImageView avatar;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.em_activity_register);
 		userNameEditText = (EditText) findViewById(R.id.username);
+        userNickEditText = (EditText) findViewById(R.id.nick);
 		passwordEditText = (EditText) findViewById(R.id.password);
 		confirmPwdEditText = (EditText) findViewById(R.id.confirm_password);
+        avatar = (ImageView) findViewById(R.id.iv_avatar);
+        findViewById(R.id.btn_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 	}
 
 	/**
