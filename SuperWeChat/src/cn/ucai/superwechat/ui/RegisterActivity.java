@@ -17,6 +17,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,10 +27,15 @@ import com.hyphenate.EMError;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
 
+import java.io.File;
+
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.data.OkHttpUtils2;
 import cn.ucai.superwechat.listener.OnSetAvatarListener;
+import cn.ucai.superwechat.utils.Utils;
 
 /**
  * 注册页
@@ -45,6 +51,12 @@ public class RegisterActivity extends BaseActivity {
 	private ImageView avatar;
     private OnSetAvatarListener mOnSetAvatarListener;
     private String avatarName;
+
+
+    String username;
+    String nick;
+    String pwd;
+    ProgressDialog pd;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +104,9 @@ public class RegisterActivity extends BaseActivity {
 	 * @param view
 	 */
 	public void register(View view) {
-		final String username = userNameEditText.getText().toString().trim();
-        final String nick = userNickEditText.getText().toString().trim();
-		final String pwd = passwordEditText.getText().toString().trim();
+		username = userNameEditText.getText().toString().trim();
+        nick = userNickEditText.getText().toString().trim();
+		pwd = passwordEditText.getText().toString().trim();
 		String confirm_pwd = confirmPwdEditText.getText().toString().trim();
 		if (TextUtils.isEmpty(username)) {
 			Toast.makeText(this, getResources().getString(R.string.User_name_cannot_be_empty), Toast.LENGTH_SHORT).show();
@@ -122,52 +134,89 @@ public class RegisterActivity extends BaseActivity {
 		}
 
 		if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(pwd)) {
-			final ProgressDialog pd = new ProgressDialog(this);
+			pd = new ProgressDialog(this);
 			pd.setMessage(getResources().getString(R.string.Is_the_registered));
 			pd.show();
 
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						// 调用sdk注册方法
-						EMClient.getInstance().createAccount(username, pwd);
-						runOnUiThread(new Runnable() {
-							public void run() {
-								if (!RegisterActivity.this.isFinishing())
-									pd.dismiss();
-								// 保存用户名
-								DemoHelper.getInstance().setCurrentUserName(username);
-								Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
-								finish();
-							}
-						});
-					} catch (final HyphenateException e) {
-						runOnUiThread(new Runnable() {
-							public void run() {
-								if (!RegisterActivity.this.isFinishing())
-									pd.dismiss();
-								int errorCode=e.getErrorCode();
-								if(errorCode==EMError.NETWORK_ERROR){
-									Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_anomalies), Toast.LENGTH_SHORT).show();
-								}else if(errorCode == EMError.USER_ALREADY_EXIST){
-									Toast.makeText(getApplicationContext(), getResources().getString(R.string.User_already_exists), Toast.LENGTH_SHORT).show();
-								}else if(errorCode == EMError.USER_AUTHENTICATION_FAILED){
-									Toast.makeText(getApplicationContext(), getResources().getString(R.string.registration_failed_without_permission), Toast.LENGTH_SHORT).show();
-								}else if(errorCode == EMError.USER_ILLEGAL_ARGUMENT){
-								    Toast.makeText(getApplicationContext(), getResources().getString(R.string.illegal_user_name),Toast.LENGTH_SHORT).show();
-								}else{
-									Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registration_failed) + e.getMessage(), Toast.LENGTH_SHORT).show();
-								}
-							}
-						});
-					}
-				}
-			}).start();
+            registerAppServer();
+
+
 
 		}
 	}
 
-	public void back(View view) {
+    private void registerAppServer() {
+        File file = new File(OnSetAvatarListener.getAvatarPath(mContext,I.AVATAR_TYPE_USER_PATH),
+                avatarName + I.AVATAR_SUFFIX_JPG);
+        OkHttpUtils2<Result> utils = new OkHttpUtils2<>();
+        utils.setRequestUrl(I.REQUEST_REGISTER)//添加上传的请求参数
+                .addParam(I.User.USER_NAME, username)//添加用户的账号
+                .addParam(I.User.NICK,nick)//添加用户的昵称
+                .addParam(I.User.PASSWORD,pwd)//添加用户的密码
+                .targetClass(Result.class)//设置服务端返回json数据的解析类型
+                .addFile(file)//添加上传的文件
+                .execute(new OkHttpUtils2.OnCompleteListener<Result>() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        Log.e(TAG,"result="+result);
+                        if(result.isRetMsg()) {
+                            registerEMServer();
+                        }else{
+                            pd.dismiss();
+                            Toast.makeText(getApplicationContext(), Utils.getResourceString(mContext,result.getRetCode()), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        pd.dismiss();
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registration_failed) + error, Toast.LENGTH_SHORT).show();
+                        Log.e(TAG,"error="+error);
+                    }
+                });
+    }
+
+    private void registerEMServer() {
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    // 调用sdk注册方法
+                    EMClient.getInstance().createAccount(username, pwd);
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (!RegisterActivity.this.isFinishing())
+                                pd.dismiss();
+                            // 保存用户名
+                            DemoHelper.getInstance().setCurrentUserName(username);
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registered_successfully), Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    });
+                } catch (final HyphenateException e) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            if (!RegisterActivity.this.isFinishing())
+                                pd.dismiss();
+                            int errorCode=e.getErrorCode();
+                            if(errorCode==EMError.NETWORK_ERROR){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.network_anomalies), Toast.LENGTH_SHORT).show();
+                            }else if(errorCode == EMError.USER_ALREADY_EXIST){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.User_already_exists), Toast.LENGTH_SHORT).show();
+                            }else if(errorCode == EMError.USER_AUTHENTICATION_FAILED){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.registration_failed_without_permission), Toast.LENGTH_SHORT).show();
+                            }else if(errorCode == EMError.USER_ILLEGAL_ARGUMENT){
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.illegal_user_name),Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.Registration_failed) + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void back(View view) {
 		finish();
 	}
 
