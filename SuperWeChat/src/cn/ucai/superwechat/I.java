@@ -2,6 +2,9 @@ package cn.ucai.superwechat;
 
 public interface I {
 
+    int PAGE_ID_DEFAULT = 1;
+    int PAGE_SIZE_DEFAULT = 20;
+
     interface User {
         String TABLE_NAME							        =		"t_superwechat_user";
         String USER_NAME 							        = 		"m_user_name";					//用户账号
@@ -146,7 +149,7 @@ public interface I {
     /** 客户端发送的下载用户头像请求 */
     String REQUEST_DOWNLOAD_AVATAR	 				        = 		"downloadAvatar";
     /** 客户端发送的下载联系人所有集合请求 */
-    String REQUEST_DOWNLOAD_CONTACT_ALL_LIST 		        = 		"download_contact_all_list";
+    String REQUEST_DOWNLOAD_CONTACT_ALL_LIST 		        = 		"downloadContactAllList";
     /** 客户端发送的下载联系人集合请求 */
     String REQUEST_DOWNLOAD_CONTACT_PAGE_LIST 		        = 		"download_contact_page_list";
     /** 客户端发送的删除联系人请求 */
@@ -176,7 +179,7 @@ public interface I {
     /** 客户端发送的下载多个群成员请求 */
     String REQUEST_DOWNLOAD_GROUP_MEMBERS_BY_LIMIT 	        = 		"download_group_members_by_limit";
     /** 客户端发送的下载多个群成员请求 */
-    String REQUEST_DOWNLOAD_GROUP_MEMBERS_BY_HXID 	        = 		"download_group_members_by_hxid";
+    String REQUEST_DOWNLOAD_GROUP_MEMBERS_BY_HXID 	        = 		"downloadGroupMembersByHxId";
     /** 客户端发送的下载多个群成员请求 */
     String REQUEST_DOWNLOAD_GROUP_MEMBERS_BY_HXID_LIMIT 	= 		"download_group_members_by_hxid_limit";
     /** 客户端发送的删除群成员请求 */
@@ -186,11 +189,11 @@ public interface I {
     /** 客户端发送的删除群组请求 */
     String REQUEST_DELETE_GROUP 					        = 		"delete_group";
     /** 客户端发送的下载公开裙请求 */
-    String REQUEST_FIND_PUBLIC_GROUPS 				        = 		"download_public_groups";
+    String REQUEST_FIND_PUBLIC_GROUPS 				        = 		"findPublicGroups";
     /** 客户端发送的根据群组名称模糊查找群组请求 */
     String REQUEST_FIND_GROUP_BY_GROUP_NAME 		        = 		"find_group_by_group_name";
     /** 客户端发送的用户姓名查找用户所在的群组请求 */
-    String REQUEST_FIND_GROUP_BY_USER_NAME 			        = 		"find_group_by_user_name";
+    String REQUEST_FIND_GROUP_BY_USER_NAME 			        = 		"findAllGroupByUserName";
     /** 客户端发送的根据群组账号查找群组请求 */
     String REQUEST_FIND_GROUP_BY_ID					        = 		"find_group_by_group_id";
     /** 客户端发送的根据群组环信id查找群组请求 */
