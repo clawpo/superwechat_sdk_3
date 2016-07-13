@@ -10,10 +10,14 @@ import android.widget.TextView;
 import com.hyphenate.chat.EMClient;
 
 import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.SuperWeChatApplication;
 import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.db.EMUserDao;
+import cn.ucai.superwechat.task.DownloadAllGroupTask;
+import cn.ucai.superwechat.task.DownloadContactListTask;
+import cn.ucai.superwechat.task.DownloadPublicGroupTask;
 
 /**
  * 开屏页
@@ -44,6 +48,19 @@ public class SplashActivity extends BaseActivity {
 	protected void onStart() {
 		super.onStart();
 
+        if (DemoHelper.getInstance().isLoggedIn()) {
+            Log.e(TAG,"start download contact,group,public group");
+            String username = EMClient.getInstance().getCurrentUser();
+            Log.e(TAG,"user="+username);
+            EMUserDao dao = new EMUserDao(SplashActivity.this);
+            UserAvatar currentUser = dao.getUser(username);
+            Log.e(TAG,"currentUser="+currentUser);
+            SuperWeChatApplication.getInstance().setUser(currentUser);
+            new DownloadContactListTask(SplashActivity.this,username).execute();
+            new DownloadAllGroupTask(SplashActivity.this,username).execute();
+            new DownloadPublicGroupTask(SplashActivity.this,username, I.PAGE_ID_DEFAULT,I.PAGE_SIZE_DEFAULT).execute();
+        }
+
 		new Thread(new Runnable() {
 			public void run() {
 				if (DemoHelper.getInstance().isLoggedIn()) {
@@ -53,12 +70,6 @@ public class SplashActivity extends BaseActivity {
 					long start = System.currentTimeMillis();
 					EMClient.getInstance().groupManager().loadAllGroups();
 					EMClient.getInstance().chatManager().loadAllConversations();
-                    String user = EMClient.getInstance().getCurrentUser();
-                    Log.e(TAG,"user="+user);
-                    EMUserDao dao = new EMUserDao(SplashActivity.this);
-                    UserAvatar currentUser = dao.getUser(user);
-                    Log.e(TAG,"currentUser="+currentUser);
-                    SuperWeChatApplication.getInstance().setUser(currentUser);
 					long costTime = System.currentTimeMillis() - start;
 					//等待sleeptime时长
 					if (sleepTime - costTime > 0) {

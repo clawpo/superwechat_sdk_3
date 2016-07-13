@@ -39,6 +39,9 @@ import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.data.OkHttpUtils2;
 import cn.ucai.superwechat.db.DemoDBManager;
 import cn.ucai.superwechat.db.EMUserDao;
+import cn.ucai.superwechat.task.DownloadAllGroupTask;
+import cn.ucai.superwechat.task.DownloadContactListTask;
+import cn.ucai.superwechat.task.DownloadPublicGroupTask;
 import cn.ucai.superwechat.utils.Utils;
 
 /**
@@ -183,6 +186,19 @@ public class LoginActivity extends BaseActivity {
                                         Log.e(TAG, "user=" + SuperWeChatApplication.getInstance().getUser());
                                         EMUserDao dao = new EMUserDao(LoginActivity.this);
                                         dao.saveUser(user);
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Log.e(TAG,"start download contact,group,public group");
+                                                //下载联系人集合
+                                                new DownloadContactListTask(LoginActivity.this,currentUsername).execute();
+                                                //下载群组集合
+                                                new DownloadAllGroupTask(LoginActivity.this,currentUsername).execute();
+                                                //下载公开群组集合
+                                                new DownloadPublicGroupTask(LoginActivity.this,currentUsername,
+                                                        I.PAGE_ID_DEFAULT,I.PAGE_SIZE_DEFAULT).execute();
+                                            }
+                                        });
                                     }else{
                                         Log.e(TAG, "error=" + result.getRetCode());
                                         Toast.makeText(getApplicationContext(), Utils.getResourceString(LoginActivity.this,result.getRetCode()), Toast.LENGTH_SHORT).show();
