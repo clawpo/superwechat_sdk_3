@@ -7,14 +7,14 @@ import java.util.Map;
 
 import android.content.Context;
 
-import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.domain.RobotUser;
 import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.model.EaseAtMessageHelper;
 
 public class DemoModel {
-    UserDao dao = null;
+    EMUserDao dao = null;
     protected Context context = null;
     protected Map<Key,Object> valueCache = new HashMap<Key,Object>();
     
@@ -24,18 +24,18 @@ public class DemoModel {
     }
     
     public boolean saveContactList(List<EaseUser> contactList) {
-        UserDao dao = new UserDao(context);
+        EMUserDao dao = new EMUserDao(context);
         dao.saveContactList(contactList);
         return true;
     }
 
     public Map<String, EaseUser> getContactList() {
-        UserDao dao = new UserDao(context);
+        EMUserDao dao = new EMUserDao(context);
         return dao.getContactList();
     }
     
     public void saveContact(EaseUser user){
-        UserDao dao = new UserDao(context);
+        EMUserDao dao = new EMUserDao(context);
         dao.saveContact(user);
     }
     
@@ -55,12 +55,12 @@ public class DemoModel {
     }
     
     public Map<String, RobotUser> getRobotList(){
-        UserDao dao = new UserDao(context);
+        EMUserDao dao = new EMUserDao(context);
         return dao.getRobotUser();
     }
 
     public boolean saveRobotList(List<RobotUser> robotList){
-        UserDao dao = new UserDao(context);
+        EMUserDao dao = new EMUserDao(context);
         dao.saveRobotUser(robotList);
         return true;
     }
@@ -132,7 +132,7 @@ public class DemoModel {
 
     public void setDisabledGroups(List<String> groups){
         if(dao == null){
-            dao = new UserDao(context);
+            dao = new EMUserDao(context);
         }
         
         List<String> list = new ArrayList<String>();
@@ -155,7 +155,7 @@ public class DemoModel {
         Object val = valueCache.get(Key.DisabledGroups);
 
         if(dao == null){
-            dao = new UserDao(context);
+            dao = new EMUserDao(context);
         }
         
         if(val == null){
@@ -168,7 +168,7 @@ public class DemoModel {
     
     public void setDisabledIds(List<String> ids){
         if(dao == null){
-            dao = new UserDao(context);
+            dao = new EMUserDao(context);
         }
         
         dao.setDisabledIds(ids);
@@ -179,7 +179,7 @@ public class DemoModel {
         Object val = valueCache.get(Key.DisabledIds);
         
         if(dao == null){
-            dao = new UserDao(context);
+            dao = new EMUserDao(context);
         }
 
         if(val == null){

@@ -1,12 +1,5 @@
 package cn.ucai.superwechat;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,22 +26,6 @@ import com.hyphenate.chat.EMMessage.Status;
 import com.hyphenate.chat.EMMessage.Type;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.chat.EMTextMessageBody;
-import cn.ucai.superwechat.R;
-
-import cn.ucai.superwechat.db.DemoDBManager;
-import cn.ucai.superwechat.db.InviteMessgeDao;
-import cn.ucai.superwechat.db.UserDao;
-import cn.ucai.superwechat.domain.EmojiconExampleGroupData;
-import cn.ucai.superwechat.domain.InviteMessage;
-import cn.ucai.superwechat.domain.InviteMessage.InviteMesageStatus;
-import cn.ucai.superwechat.domain.RobotUser;
-import cn.ucai.superwechat.parse.UserProfileManager;
-import cn.ucai.superwechat.receiver.CallReceiver;
-import cn.ucai.superwechat.ui.ChatActivity;
-import cn.ucai.superwechat.ui.MainActivity;
-import cn.ucai.superwechat.ui.VideoCallActivity;
-import cn.ucai.superwechat.ui.VoiceCallActivity;
-import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.controller.EaseUI;
 import com.hyphenate.easeui.controller.EaseUI.EaseEmojiconInfoProvider;
 import com.hyphenate.easeui.controller.EaseUI.EaseSettingsProvider;
@@ -62,6 +39,28 @@ import com.hyphenate.easeui.model.EaseNotifier.EaseNotificationInfoProvider;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import cn.ucai.superwechat.db.DemoDBManager;
+import cn.ucai.superwechat.db.EMUserDao;
+import cn.ucai.superwechat.db.InviteMessgeDao;
+import cn.ucai.superwechat.domain.EmojiconExampleGroupData;
+import cn.ucai.superwechat.domain.InviteMessage;
+import cn.ucai.superwechat.domain.InviteMessage.InviteMesageStatus;
+import cn.ucai.superwechat.domain.RobotUser;
+import cn.ucai.superwechat.parse.UserProfileManager;
+import cn.ucai.superwechat.receiver.CallReceiver;
+import cn.ucai.superwechat.ui.ChatActivity;
+import cn.ucai.superwechat.ui.MainActivity;
+import cn.ucai.superwechat.ui.VideoCallActivity;
+import cn.ucai.superwechat.ui.VoiceCallActivity;
+import cn.ucai.superwechat.utils.PreferenceManager;
 
 public class DemoHelper {
     /**
@@ -128,7 +127,7 @@ public class DemoHelper {
     private EMConnectionListener connectionListener;
 
     private InviteMessgeDao inviteMessgeDao;
-    private UserDao userDao;
+    private EMUserDao userDao;
 
     private LocalBroadcastManager broadcastManager;
 
@@ -424,7 +423,7 @@ public class DemoHelper {
     
     private void initDbDao() {
         inviteMessgeDao = new InviteMessgeDao(appContext);
-        userDao = new UserDao(appContext);
+        userDao = new EMUserDao(appContext);
     }
     
     /**
@@ -860,7 +859,7 @@ public class DemoHelper {
 	/**
 	 * 设置好友user list到内存中
 	 * 
-	 * @param contactList
+	 * @param aContactList
 	 */
 	public void setContactList(Map<String, EaseUser> aContactList) {
 		if(aContactList == null){
@@ -931,7 +930,7 @@ public class DemoHelper {
 	 /**
      * update user list to cach And db
      *
-     * @param contactList
+     * @param contactInfoList
      */
     public void updateContactList(List<EaseUser> contactInfoList) {
          for (EaseUser u : contactInfoList) {
@@ -1015,7 +1014,6 @@ public class DemoHelper {
     * 同步操作，从服务器获取群组列表
     * 该方法会记录更新状态，可以通过isSyncingGroupsFromServer获取是否正在更新
     * 和isGroupsSyncedWithServer获取是否更新已经完成
-    * @throws EaseMobException
     */
    public synchronized void asyncFetchGroupsFromServer(final EMCallBack callback){
        if(isSyncingGroupsWithServer){
@@ -1104,7 +1102,7 @@ public class DemoHelper {
                    getContactList().clear();
                    getContactList().putAll(userlist);
                     // 存入db
-                   UserDao dao = new UserDao(appContext);
+                   EMUserDao dao = new EMUserDao(appContext);
                    List<EaseUser> users = new ArrayList<EaseUser>(userlist.values());
                    dao.saveContactList(users);
 

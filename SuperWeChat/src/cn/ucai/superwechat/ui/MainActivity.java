@@ -49,7 +49,7 @@ import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.R;
 import cn.ucai.superwechat.db.InviteMessgeDao;
-import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.runtimepermissions.PermissionsManager;
 import cn.ucai.superwechat.runtimepermissions.PermissionsResultAction;
@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity {
 		}
 
 		inviteMessgeDao = new InviteMessgeDao(this);
-		userDao = new UserDao(this);
+		userDao = new EMUserDao(this);
 		conversationListFragment = new ConversationListFragment();
 		contactListFragment = new ContactListFragment();
 		settingFragment = new SettingsFragment();
@@ -408,7 +408,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private InviteMessgeDao inviteMessgeDao;
-	private UserDao userDao;
+	private EMUserDao userDao;
 
 
 

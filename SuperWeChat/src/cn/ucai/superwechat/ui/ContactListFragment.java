@@ -13,21 +13,6 @@
  */
 package cn.ucai.superwechat.ui;
 
-import java.util.Hashtable;
-import java.util.Map;
-
-import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.DemoHelper;
-import cn.ucai.superwechat.DemoHelper.DataSyncListener;
-import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.db.InviteMessgeDao;
-import cn.ucai.superwechat.db.UserDao;
-import cn.ucai.superwechat.widget.ContactItemView;
-import com.hyphenate.easeui.domain.EaseUser;
-import com.hyphenate.easeui.ui.EaseContactListFragment;
-import com.hyphenate.util.EMLog;
-import com.hyphenate.util.NetUtils;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.view.ContextMenu;
@@ -40,6 +25,22 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
+
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.ui.EaseContactListFragment;
+import com.hyphenate.util.EMLog;
+import com.hyphenate.util.NetUtils;
+
+import java.util.Hashtable;
+import java.util.Map;
+
+import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.DemoHelper.DataSyncListener;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.db.EMUserDao;
+import cn.ucai.superwechat.db.InviteMessgeDao;
+import cn.ucai.superwechat.widget.ContactItemView;
 
 /**
  * 联系人列表页
@@ -229,7 +230,7 @@ public class ContactListFragment extends EaseContactListFragment {
 	/**
 	 * 删除联系人
 	 * 
-	 * @param toDeleteUser
+	 * @param tobeDeleteUser
 	 */
 	public void deleteContact(final EaseUser tobeDeleteUser) {
 		String st1 = getResources().getString(R.string.deleting);
@@ -243,7 +244,7 @@ public class ContactListFragment extends EaseContactListFragment {
 				try {
 					EMClient.getInstance().contactManager().deleteContact(tobeDeleteUser.getUsername());
 					// 删除db和内存中此用户的数据
-					UserDao dao = new UserDao(getActivity());
+					EMUserDao dao = new EMUserDao(getActivity());
 					dao.deleteContact(tobeDeleteUser.getUsername());
 					DemoHelper.getInstance().getContactList().remove(tobeDeleteUser.getUsername());
 					getActivity().runOnUiThread(new Runnable() {

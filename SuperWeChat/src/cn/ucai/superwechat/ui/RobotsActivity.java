@@ -23,7 +23,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMContact;
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.db.UserDao;
+import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.domain.RobotUser;
 import com.hyphenate.exceptions.HyphenateException;
 
@@ -130,7 +130,7 @@ public class RobotsActivity extends BaseActivity {
 						// 存入内存
 						DemoHelper.getInstance().setRobotList(mMap);
 						// 存入db
-						UserDao dao = new UserDao(RobotsActivity.this);
+						EMUserDao dao = new EMUserDao(RobotsActivity.this);
 						dao.saveRobotUser(robotList);
 						adapter.notifyDataSetChanged();
 					}

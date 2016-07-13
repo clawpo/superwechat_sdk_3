@@ -21,7 +21,7 @@ import android.content.Context;
 import cn.ucai.superwechat.domain.RobotUser;
 import com.hyphenate.easeui.domain.EaseUser;
 
-public class UserDao {
+public class EMUserDao {
 	public static final String TABLE_NAME = "uers";
 	public static final String COLUMN_NAME_ID = "username";
 	public static final String COLUMN_NAME_NICK = "nick";
@@ -37,7 +37,7 @@ public class UserDao {
 	public static final String ROBOT_COLUMN_NAME_AVATAR = "avatar";
 	
 	
-	public UserDao(Context context) {
+	public EMUserDao(Context context) {
 	}
 
 	/**
