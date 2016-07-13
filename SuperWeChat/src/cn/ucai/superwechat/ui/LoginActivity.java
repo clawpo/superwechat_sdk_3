@@ -13,16 +13,6 @@
  */
 package cn.ucai.superwechat.ui;
 
-import com.easemob.redpacketsdk.RPCallback;
-import com.easemob.redpacketsdk.RedPacket;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.SuperWeChatApplication;
-import cn.ucai.superwechat.DemoHelper;
-import cn.ucai.superwechat.R;
-import cn.ucai.superwechat.db.DemoDBManager;
-import com.hyphenate.easeui.utils.EaseCommonUtils;
-
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
@@ -35,6 +25,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.easeui.utils.EaseCommonUtils;
+
+import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.I;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatApplication;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.bean.UserAvatar;
+import cn.ucai.superwechat.data.OkHttpUtils2;
+import cn.ucai.superwechat.db.DemoDBManager;
+import cn.ucai.superwechat.utils.Utils;
 
 /**
  * 登陆页面
@@ -160,17 +164,36 @@ public class LoginActivity extends BaseActivity {
 				//异步获取当前用户的昵称和头像(从自己服务器获取，demo使用的一个第三方服务)
 				DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 
-				RedPacket.getInstance().initRPToken(currentUsername, currentUsername, EMClient.getInstance().getChatConfig().getAccessToken(), new RPCallback() {
-					@Override
-					public void onSuccess() {
+                final OkHttpUtils2<String> utils = new OkHttpUtils2<String>();
+                utils.setRequestUrl(I.REQUEST_LOGIN)
+                        .addParam(I.User.USER_NAME,currentUsername)
+                        .addParam(I.User.PASSWORD,currentPassword)
+                        .targetClass(String.class)
+                        .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                            @Override
+                            public void onSuccess(String s) {
+                                Log.e(TAG,"result="+s);
+                                if(s!=null && !s.isEmpty()){
+                                    Result result = Utils.getResultFromJson(s,UserAvatar.class);
+                                    Log.e(TAG,"useravatar="+result);
+                                    if(result.isRetMsg()) {
+                                        SuperWeChatApplication.getInstance().setUser((UserAvatar) result.getRetData());
+                                        Log.e(TAG, "user=" + SuperWeChatApplication.getInstance().getUser());
+                                    }else{
+                                        Log.e(TAG, "error=" + result.getRetCode());
+                                        Toast.makeText(getApplicationContext(), Utils.getResourceString(LoginActivity.this,result.getRetCode()), Toast.LENGTH_SHORT).show();
+                                    }
+                                }else{
+                                    Toast.makeText(getApplicationContext(), getString(R.string.Login_failed),Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
-					}
+                            @Override
+                            public void onError(String error) {
+                                Log.e(TAG,"error="+error);
+                            }
+                        });
 
-					@Override
-					public void onError(String s, String s1) {
-
-					}
-				});
 				// 进入主页面
 				Intent intent = new Intent(LoginActivity.this,
 						MainActivity.class);
