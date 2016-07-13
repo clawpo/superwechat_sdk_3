@@ -18,6 +18,13 @@ import android.content.Context;
 
 import com.easemob.redpacketsdk.RedPacket;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import cn.ucai.superwechat.bean.GroupAvatar;
+import cn.ucai.superwechat.bean.MemberUserAvatar;
+import cn.ucai.superwechat.bean.UserAvatar;
+
 public class SuperWeChatApplication extends Application {
 
 	public static Context applicationContext;
@@ -49,4 +56,65 @@ public class SuperWeChatApplication extends Application {
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
 	}
+
+    /**全局的当前登录用户对象*/
+	private UserAvatar user;
+    /**全局的当前登录用户的好友列表*/
+    private ArrayList<UserAvatar> contactList = new ArrayList<>();
+    /**全局的当前登录用户的好友集合*/
+    private HashMap<String,UserAvatar> userList = new HashMap<>();
+    /**全局的群组集合*/
+    private ArrayList<GroupAvatar> groupList = new ArrayList<>();
+    /**全局的当前公共群列表*/
+    private ArrayList<GroupAvatar> publicGroup = new ArrayList<>();
+    /**全局的群组成员列表*/
+    private HashMap<String,ArrayList<MemberUserAvatar>> groupMembers = new HashMap<>();
+
+    public UserAvatar getUser() {
+        return user;
+    }
+
+    public void setUser(UserAvatar user) {
+        this.user = user;
+    }
+
+    public ArrayList<UserAvatar> getContactList() {
+        return contactList;
+    }
+
+    public void setContactList(ArrayList<UserAvatar> contactList) {
+        this.contactList = contactList;
+    }
+
+    public HashMap<String, UserAvatar> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(HashMap<String, UserAvatar> userList) {
+        this.userList = userList;
+    }
+
+    public ArrayList<GroupAvatar> getGroupList() {
+        return groupList;
+    }
+
+    public void setGroupList(ArrayList<GroupAvatar> groupList) {
+        this.groupList = groupList;
+    }
+
+    public ArrayList<GroupAvatar> getPublicGroup() {
+        return publicGroup;
+    }
+
+    public void setPublicGroup(ArrayList<GroupAvatar> publicGroup) {
+        this.publicGroup = publicGroup;
+    }
+
+    public HashMap<String, ArrayList<MemberUserAvatar>> getGroupMembers() {
+        return groupMembers;
+    }
+
+    public void setGroupMembers(HashMap<String, ArrayList<MemberUserAvatar>> groupMembers) {
+        this.groupMembers = groupMembers;
+    }
 }
