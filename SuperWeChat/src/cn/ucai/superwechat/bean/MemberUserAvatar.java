@@ -48,5 +48,27 @@ public class MemberUserAvatar extends UserAvatar {
 		return "MemberUserAvatar [mmemberId=" + mmemberId + ", mmemberGroupId=" + mmemberGroupId + ", mmemberGroupHxid="
 				+ mmemberGroupHxid + ", mmemberPermission=" + mmemberPermission + "]";
 	}
-	
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MemberUserAvatar)) return false;
+        if (!super.equals(o)) return false;
+
+        MemberUserAvatar that = (MemberUserAvatar) o;
+
+        if (!mmemberId.equals(that.mmemberId)) return false;
+        if (!mmemberGroupId.equals(that.mmemberGroupId)) return false;
+        return mmemberGroupHxid.equals(that.mmemberGroupHxid);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + mmemberId.hashCode();
+        result = 31 * result + mmemberGroupId.hashCode();
+        result = 31 * result + mmemberGroupHxid.hashCode();
+        return result;
+    }
 }

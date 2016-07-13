@@ -1,6 +1,8 @@
 package cn.ucai.superwechat.bean;
 
-public class UserAvatar {
+import java.io.Serializable;
+
+public class UserAvatar implements Serializable {
 	private String muserName;
 	private String muserNick;
 	private Integer mavatarId;
@@ -8,6 +10,8 @@ public class UserAvatar {
 	private String mavatarSuffix;
 	private Integer mavatarType;
 	private String mavatarLastUpdateTime;
+
+    private String header;
 	
 	public UserAvatar() {
 		super();
@@ -80,11 +84,35 @@ public class UserAvatar {
 	public String getMAvatarSuffix() {
 		return mavatarSuffix;
 	}
-	
-	@Override
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
+    }
+
+    @Override
 	public String toString() {
 		return "UserAvatar [muserName=" + muserName + ", muserNick=" + muserNick + ", mavatarId=" + mavatarId
 				+ ", mavatarPath=" + mavatarPath + ", mavatarSuffix=" + mavatarSuffix + ", mavatarType=" + mavatarType
 				+ ", mavatarLastUpdateTime=" + mavatarLastUpdateTime + "]";
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserAvatar)) return false;
+
+        UserAvatar that = (UserAvatar) o;
+
+        return muserName.equals(that.muserName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return muserName.hashCode();
+    }
 }

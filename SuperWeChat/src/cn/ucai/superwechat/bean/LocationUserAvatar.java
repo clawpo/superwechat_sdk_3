@@ -69,5 +69,23 @@ public class LocationUserAvatar extends UserAvatar implements Serializable{
 				+ ", mlocationLongitude=" + mlocationLongitude + ", mlocationIsSearched=" + mlocationIsSearched
 				+ ", mlocationLastUpdateTime=" + mlocationLastUpdateTime + ", distance=" + distance + "]";
 	}
-	
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LocationUserAvatar)) return false;
+        if (!super.equals(o)) return false;
+
+        LocationUserAvatar that = (LocationUserAvatar) o;
+
+        return mlocationId.equals(that.mlocationId);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + mlocationId.hashCode();
+        return result;
+    }
 }
