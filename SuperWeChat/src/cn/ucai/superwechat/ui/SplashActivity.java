@@ -2,22 +2,25 @@ package cn.ucai.superwechat.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.easemob.redpacketsdk.RPCallback;
-import com.easemob.redpacketsdk.RedPacket;
 import com.hyphenate.chat.EMClient;
 
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatApplication;
+import cn.ucai.superwechat.bean.UserAvatar;
+import cn.ucai.superwechat.db.EMUserDao;
 
 /**
  * 开屏页
  *
  */
 public class SplashActivity extends BaseActivity {
+	private static final String TAG = SplashActivity.class.getSimpleName();
 	private RelativeLayout rootLayout;
 	private TextView versionText;
 	
@@ -50,18 +53,12 @@ public class SplashActivity extends BaseActivity {
 					long start = System.currentTimeMillis();
 					EMClient.getInstance().groupManager().loadAllGroups();
 					EMClient.getInstance().chatManager().loadAllConversations();
-
-					RedPacket.getInstance().initRPToken(DemoHelper.getInstance().getCurrentUsernName(), DemoHelper.getInstance().getCurrentUsernName(), EMClient.getInstance().getChatConfig().getAccessToken(), new RPCallback() {
-						@Override
-						public void onSuccess() {
-
-						}
-
-						@Override
-						public void onError(String s, String s1) {
-
-						}
-					});
+                    String user = EMClient.getInstance().getCurrentUser();
+                    Log.e(TAG,"user="+user);
+                    EMUserDao dao = new EMUserDao(SplashActivity.this);
+                    UserAvatar currentUser = dao.getUser(user);
+                    Log.e(TAG,"currentUser="+currentUser);
+                    SuperWeChatApplication.getInstance().setUser(currentUser);
 					long costTime = System.currentTimeMillis() - start;
 					//等待sleeptime时长
 					if (sleepTime - costTime > 0) {

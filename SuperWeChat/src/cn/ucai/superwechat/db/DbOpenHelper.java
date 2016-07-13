@@ -53,6 +53,17 @@ public class DbOpenHelper extends SQLiteOpenHelper{
             + EMUserDao.PREF_TABLE_NAME + " ("
             + EMUserDao.COLUMN_NAME_DISABLED_GROUPS + " TEXT, "
             + EMUserDao.COLUMN_NAME_DISABLED_IDS + " TEXT);";
+
+
+	private static final String USER_TABLE_CREATE = "CREATE TABLE "
+			+ EMUserDao.USER_TABLE_NAME + " ("
+			+ EMUserDao.USER_COLUMN_NAME_NICK + " TEXT, "
+			+ EMUserDao.USER_COLUMN_AVATAR_ID + " INTEGER, "
+            + EMUserDao.USER_COLUMN_AVATAR_PATH + " TEXT, "
+            + EMUserDao.USER_COLUMN_AVATAR_SUFFIX + " TEXT, "
+            + EMUserDao.USER_COLUMN_AVATAR_TYPE + " INTEGER, "
+            + EMUserDao.USER_COLUMN_AVATAR_LAST_UPDATE_TIME + " TEXT, "
+			+ EMUserDao.USER_COLUMN_NAME_ID + " TEXT PRIMARY KEY);";
 	
 	private DbOpenHelper(Context context) {
 		super(context, getUserDatabaseName(), null, DATABASE_VERSION);
@@ -75,7 +86,7 @@ public class DbOpenHelper extends SQLiteOpenHelper{
 		db.execSQL(INIVTE_MESSAGE_TABLE_CREATE);
 		db.execSQL(CREATE_PREF_TABLE);
 		db.execSQL(ROBOT_TABLE_CREATE);
-		
+		db.execSQL(USER_TABLE_CREATE);
 	}
 
 	@Override

@@ -13,13 +13,15 @@
  */
 package cn.ucai.superwechat.db;
 
+import android.content.Context;
+
+import com.hyphenate.easeui.domain.EaseUser;
+
 import java.util.List;
 import java.util.Map;
 
-import android.content.Context;
-
+import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.domain.RobotUser;
-import com.hyphenate.easeui.domain.EaseUser;
 
 public class EMUserDao {
 	public static final String TABLE_NAME = "uers";
@@ -35,6 +37,15 @@ public class EMUserDao {
 	public static final String ROBOT_COLUMN_NAME_ID = "username";
 	public static final String ROBOT_COLUMN_NAME_NICK = "nick";
 	public static final String ROBOT_COLUMN_NAME_AVATAR = "avatar";
+
+	public static final String USER_TABLE_NAME = "t_superwechat_user";
+    public static final String USER_COLUMN_NAME_ID = "user_name";
+    public static final String USER_COLUMN_NAME_NICK = "user_nick";
+    public static final String USER_COLUMN_AVATAR_ID = "avatar_id";
+    public static final String USER_COLUMN_AVATAR_PATH = "avatar_path";
+    public static final String USER_COLUMN_AVATAR_SUFFIX = "avatar_suffix";
+    public static final String USER_COLUMN_AVATAR_TYPE = "avatar_type";
+    public static final String USER_COLUMN_AVATAR_LAST_UPDATE_TIME = "avatar_last_update_time";
 	
 	
 	public EMUserDao(Context context) {
@@ -97,5 +108,13 @@ public class EMUserDao {
     
     public void saveRobotUser(List<RobotUser> robotList){
     	DemoDBManager.getInstance().saveRobotList(robotList);
+    }
+
+    public void saveUser(UserAvatar user){
+        DemoDBManager.getInstance().saveUser(user);
+    }
+
+    public UserAvatar getUser(String username){
+        return DemoDBManager.getInstance().getUser(username);
     }
 }

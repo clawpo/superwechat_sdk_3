@@ -1,5 +1,14 @@
 package cn.ucai.superwechat.db;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
+
+import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.utils.EaseCommonUtils;
+import com.hyphenate.util.HanziToPinyin;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -7,17 +16,10 @@ import java.util.Map;
 
 import cn.ucai.superwechat.Constant;
 import cn.ucai.superwechat.SuperWeChatApplication;
+import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.domain.InviteMessage;
 import cn.ucai.superwechat.domain.InviteMessage.InviteMesageStatus;
 import cn.ucai.superwechat.domain.RobotUser;
-import com.hyphenate.easeui.domain.EaseUser;
-import com.hyphenate.easeui.utils.EaseCommonUtils;
-import com.hyphenate.util.HanziToPinyin;
-
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 public class DemoDBManager {
     static private DemoDBManager dbMgr = new DemoDBManager();
@@ -371,7 +373,44 @@ public class DemoDBManager {
 		}
 		return users;
 	}
-    
-    
-    
+
+    /**
+     * 保存当前登录用户
+     * @param user
+     */
+    synchronized public void saveUser(UserAvatar user){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(EMUserDao.USER_COLUMN_NAME_ID, user.getMUserName());
+        if(user.getMUserNick() != null)
+            values.put(EMUserDao.USER_COLUMN_NAME_NICK, user.getMUserNick());
+        values.put(EMUserDao.USER_COLUMN_AVATAR_ID,user.getMAvatarId());
+        values.put(EMUserDao.USER_COLUMN_AVATAR_PATH,user.getMAvatarPath());
+        values.put(EMUserDao.USER_COLUMN_AVATAR_SUFFIX,user.getMAvatarSuffix());
+        values.put(EMUserDao.USER_COLUMN_AVATAR_TYPE,user.getMAvatarType());
+        values.put(EMUserDao.USER_COLUMN_AVATAR_LAST_UPDATE_TIME,user.getMAvatarLastUpdateTime());
+        if(db.isOpen()){
+            db.replace(EMUserDao.USER_TABLE_NAME, null, values);
+        }
+    }
+
+
+    synchronized UserAvatar getUser(String username){
+        UserAvatar user = null;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        if(db.isOpen()){
+            Cursor cursor = db.rawQuery("select * from " + EMUserDao.USER_TABLE_NAME + " where " + EMUserDao.USER_COLUMN_NAME_ID + "=?", new String[]{username});
+            if(cursor.moveToFirst()){
+                String muserNick = cursor.getString(cursor.getColumnIndex(EMUserDao.USER_COLUMN_NAME_NICK));
+                Integer mavatarId = cursor.getInt(cursor.getColumnIndex(EMUserDao.USER_COLUMN_AVATAR_ID));
+                String mavatarPath = cursor.getString(cursor.getColumnIndex(EMUserDao.USER_COLUMN_AVATAR_PATH));
+                String mavatarSuffix = cursor.getString(cursor.getColumnIndex(EMUserDao.USER_COLUMN_AVATAR_SUFFIX));
+                Integer mavatarType = cursor.getInt(cursor.getColumnIndex(EMUserDao.USER_COLUMN_AVATAR_TYPE));
+                String mavatarLastUpdateTime = cursor.getString(cursor.getColumnIndex(EMUserDao.USER_COLUMN_AVATAR_LAST_UPDATE_TIME));
+                user = new UserAvatar(username,muserNick,mavatarId,mavatarPath,mavatarSuffix,mavatarType,mavatarLastUpdateTime);
+            }
+            cursor.close();
+        }
+        return user;
+    }
 }

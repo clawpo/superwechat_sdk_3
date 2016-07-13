@@ -38,6 +38,7 @@ import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.data.OkHttpUtils2;
 import cn.ucai.superwechat.db.DemoDBManager;
+import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.utils.Utils;
 
 /**
@@ -154,7 +155,7 @@ public class LoginActivity extends BaseActivity {
 				// ** manually load all local groups and
 			    EMClient.getInstance().groupManager().loadAllGroups();
 			    EMClient.getInstance().chatManager().loadAllConversations();
-				
+
 				// 更新当前用户的nickname 此方法的作用是在ios离线推送时能够显示用户nick
 				boolean updatenick = EMClient.getInstance().updateCurrentUserNick(
 						SuperWeChatApplication.currentUserNick.trim());
@@ -177,8 +178,11 @@ public class LoginActivity extends BaseActivity {
                                     Result result = Utils.getResultFromJson(s,UserAvatar.class);
                                     Log.e(TAG,"useravatar="+result);
                                     if(result.isRetMsg()) {
-                                        SuperWeChatApplication.getInstance().setUser((UserAvatar) result.getRetData());
+                                        UserAvatar user = (UserAvatar) result.getRetData();
+                                        SuperWeChatApplication.getInstance().setUser(user);
                                         Log.e(TAG, "user=" + SuperWeChatApplication.getInstance().getUser());
+                                        EMUserDao dao = new EMUserDao(LoginActivity.this);
+                                        dao.saveUser(user);
                                     }else{
                                         Log.e(TAG, "error=" + result.getRetCode());
                                         Toast.makeText(getApplicationContext(), Utils.getResourceString(LoginActivity.this,result.getRetCode()), Toast.LENGTH_SHORT).show();

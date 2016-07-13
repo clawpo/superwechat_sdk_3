@@ -76,6 +76,7 @@ public class SuperWeChatApplication extends Application {
 
     public void setUser(UserAvatar user) {
         this.user = user;
+        currentUserNick= user.getMUserNick();
     }
 
     public ArrayList<UserAvatar> getContactList() {
