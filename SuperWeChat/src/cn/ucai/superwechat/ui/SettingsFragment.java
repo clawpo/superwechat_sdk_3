@@ -13,17 +13,6 @@
  */
 package cn.ucai.superwechat.ui;
 
-import com.easemob.redpacketui.utils.RedPacketUtil;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
-import com.hyphenate.chat.EMOptions;
-import cn.ucai.superwechat.Constant;
-import cn.ucai.superwechat.DemoHelper;
-import cn.ucai.superwechat.DemoModel;
-import cn.ucai.superwechat.R;
-import com.hyphenate.easeui.widget.EaseSwitchButton;
-import com.hyphenate.util.EMLog;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +27,19 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.easemob.redpacketui.utils.RedPacketUtil;
+import com.hyphenate.EMCallBack;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMOptions;
+import com.hyphenate.easeui.widget.EaseSwitchButton;
+import com.hyphenate.util.EMLog;
+
+import cn.ucai.superwechat.Constant;
+import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.DemoModel;
+import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.SuperWeChatApplication;
 
 /**
  * 设置界面
@@ -354,6 +356,12 @@ public class SettingsFragment extends Fragment implements OnClickListener {
 			public void onSuccess() {
 				getActivity().runOnUiThread(new Runnable() {
 					public void run() {
+                        SuperWeChatApplication.getInstance().setUser(null);
+                        SuperWeChatApplication.getInstance().getContactList().clear();
+                        SuperWeChatApplication.getInstance().getUserList().clear();
+                        SuperWeChatApplication.getInstance().getGroupList().clear();
+                        SuperWeChatApplication.getInstance().getPublicGroup().clear();
+                        SuperWeChatApplication.getInstance().getGroupMembers().clear();
 						pd.dismiss();
 						// 重新显示登陆页面
 						((MainActivity) getActivity()).finish();
