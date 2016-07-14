@@ -80,11 +80,16 @@ public interface I {
     String SLASH    								        = 		"/";							//斜杠
     String QUESTION                                         =       "?";                            //问号
     String AMPERSAND                                        =       "&";                            //and
+    String EQUAL                                            =       "=";                            //等于号
     String AVATAR_TYPE_USER_PATH					        = 		"user_avatar";					//用户头像保存目录
     String AVATAR_TYPE_GROUP_PATH 					        =		"group_icon";					//群组头像保存目录
     String AVATAR_SUFFIX_PNG						        =		".png";							//PNG图片后缀名
     String AVATAR_SUFFIX_JPG						        =		".jpg";							//JPG图片后缀名
     String MSG_PREFIX_MSG							        = 		"msg_";							//返回的消息码前缀
+    String WIDTH                                            =       "width";                        //宽度
+    String HEIGHT                                           =       "height";                       //高度
+    int WIDTH_DEFAULT                                       =       200;                            //宽度默认值
+    int HEIGHT_DEFAULT                                      =       200;                            //高度默认值
     int LOCATION_IS_SEARCH_ALLOW					        =		1;								//可以被搜索到地理位置
     int LOCATION_IS_SEARCH_INHIBIT					        =		0;								//禁止被搜索到地理位置
     int MSG_SUCCESS						                    =  		0;							    //默认成功

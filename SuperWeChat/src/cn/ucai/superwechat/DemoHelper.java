@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.db.DemoDBManager;
 import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.db.InviteMessgeDao;
@@ -61,6 +62,7 @@ import cn.ucai.superwechat.ui.MainActivity;
 import cn.ucai.superwechat.ui.VideoCallActivity;
 import cn.ucai.superwechat.ui.VoiceCallActivity;
 import cn.ucai.superwechat.utils.PreferenceManager;
+import cn.ucai.superwechat.utils.UserUtils;
 
 public class DemoHelper {
     /**
@@ -735,6 +737,13 @@ public class DemoHelper {
             user = new EaseUser(username);
             EaseCommonUtils.setUserInitialLetter(user);
         }
+        Log.e(TAG,"user="+user);
+        UserAvatar userAvatar = SuperWeChatApplication.getInstance().getUserList().get(username);
+        Log.e(TAG,"userAvatar="+userAvatar);
+        String avatar = UserUtils.getUserAvatarPath(username);
+        Log.e(TAG,"avatar="+avatar);
+        user.setAvatar(avatar);
+        user.setNick(userAvatar.getMUserNick());
         return user;
 	}
 	
