@@ -27,6 +27,11 @@ public class UserUtils {
         return getAvatarPath(user.getMUserName(),user.getMAvatarPath(),user.getMAvatarSuffix());
     }
 
+    public static String getUserAvatarPathByUserName(String username){
+        if(username==null || username.isEmpty())return null;
+        return getAvatarPath(username,I.AVATAR_TYPE_USER_PATH,I.AVATAR_SUFFIX_JPG);
+    }
+
     public static String getAvatarPath(String avatarName,String avatarType,String suffix){
         StringBuffer sb = new StringBuffer();
         sb.append(I.SERVER_ROOT)

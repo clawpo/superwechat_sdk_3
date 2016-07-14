@@ -738,9 +738,11 @@ public class DemoHelper {
             EaseCommonUtils.setUserInitialLetter(user);
         }
         UserAvatar userAvatar = SuperWeChatApplication.getInstance().getUserList().get(username);
-        String avatar = UserUtils.getUserAvatarPath(userAvatar);
+        if(userAvatar!=null) {
+            user.setNick(userAvatar.getMUserNick());
+        }
+        String avatar = UserUtils.getUserAvatarPathByUserName(username);
         user.setAvatar(avatar);
-        user.setNick(userAvatar.getMUserNick());
         return user;
 	}
 	
