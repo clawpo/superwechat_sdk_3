@@ -17,34 +17,40 @@ public class UserUtils {
     }
 
     public static String getUserAvatarPath(String username){
-        String path = null;
+        if(username==null || username.isEmpty())return null;
         UserAvatar user = getUserInfo(username);
-        if(user!=null){
-            StringBuffer sb = new StringBuffer();
-            sb.append(I.SERVER_ROOT)
-                    .append(I.REQUEST_DOWNLOAD_AVATAR)
-                    .append(I.QUESTION)
-                    .append(I.NAME_OR_HXID)
-                    .append(I.EQUAL)
-                    .append(username)
-                    .append(I.AMPERSAND)
-                    .append(I.AVATAR_TYPE)
-                    .append(I.EQUAL)
-                    .append(I.AVATAR_TYPE_USER_PATH)
-                    .append(I.AMPERSAND)
-                    .append(I.Avatar.AVATAR_SUFFIX)
-                    .append(I.EQUAL)
-                    .append(user.getMAvatarSuffix())
-                    .append(I.AMPERSAND)
-                    .append(I.WIDTH)
-                    .append(I.EQUAL)
-                    .append(I.WIDTH_DEFAULT)
-                    .append(I.AMPERSAND)
-                    .append(I.HEIGHT)
-                    .append(I.EQUAL)
-                    .append(I.HEIGHT_DEFAULT);
-            path = sb.toString();
-        }
-        return path;
+        return getUserAvatarPath(user);
+    }
+
+    public static String getUserAvatarPath(UserAvatar user){
+        if(user==null)return null;
+        return getAvatarPath(user.getMUserName(),user.getMAvatarPath(),user.getMAvatarSuffix());
+    }
+
+    public static String getAvatarPath(String avatarName,String avatarType,String suffix){
+        StringBuffer sb = new StringBuffer();
+        sb.append(I.SERVER_ROOT)
+                .append(I.REQUEST_DOWNLOAD_AVATAR)
+                .append(I.QUESTION)
+                .append(I.NAME_OR_HXID)
+                .append(I.EQUAL)
+                .append(avatarName)
+                .append(I.AMPERSAND)
+                .append(I.AVATAR_TYPE)
+                .append(I.EQUAL)
+                .append(avatarType)
+                .append(I.AMPERSAND)
+                .append(I.Avatar.AVATAR_SUFFIX)
+                .append(I.EQUAL)
+                .append(suffix)
+                .append(I.AMPERSAND)
+                .append(I.WIDTH)
+                .append(I.EQUAL)
+                .append(I.WIDTH_DEFAULT)
+                .append(I.AMPERSAND)
+                .append(I.HEIGHT)
+                .append(I.EQUAL)
+                .append(I.HEIGHT_DEFAULT);
+        return sb.toString();
     }
 }

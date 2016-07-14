@@ -737,11 +737,8 @@ public class DemoHelper {
             user = new EaseUser(username);
             EaseCommonUtils.setUserInitialLetter(user);
         }
-        Log.e(TAG,"user="+user);
         UserAvatar userAvatar = SuperWeChatApplication.getInstance().getUserList().get(username);
-        Log.e(TAG,"userAvatar="+userAvatar);
-        String avatar = UserUtils.getUserAvatarPath(username);
-        Log.e(TAG,"avatar="+avatar);
+        String avatar = UserUtils.getUserAvatarPath(userAvatar);
         user.setAvatar(avatar);
         user.setNick(userAvatar.getMUserNick());
         return user;
