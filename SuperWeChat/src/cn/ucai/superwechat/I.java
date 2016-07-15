@@ -158,7 +158,7 @@ public interface I {
     /** 客户端发送的下载联系人集合请求 */
     String REQUEST_DOWNLOAD_CONTACT_PAGE_LIST 		        = 		"download_contact_page_list";
     /** 客户端发送的删除联系人请求 */
-    String REQUEST_DELETE_CONTACT 					        = 		"delete_contact";
+    String REQUEST_DELETE_CONTACT 					        = 		"deleteContact";
     /** 客户端发送的添加联系人请求 */
     String REQUEST_ADD_CONTACT 						        = 		"addContact";
     /** 客户端发送的查找用户请求 */

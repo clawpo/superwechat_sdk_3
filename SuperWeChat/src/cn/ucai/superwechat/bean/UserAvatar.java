@@ -17,9 +17,13 @@ public class UserAvatar implements Serializable {
 		super();
 	}
 
-	public UserAvatar(String muserName, String muserNick,
-			Integer mavatarId, String mavatarPath, String mavatarSuffix, Integer mavatarType,
-			String mavatarLastUpdateTime) {
+    public UserAvatar(String muserName) {
+        this.muserName = muserName;
+    }
+
+    public UserAvatar(String muserName, String muserNick,
+                      Integer mavatarId, String mavatarPath, String mavatarSuffix, Integer mavatarType,
+                      String mavatarLastUpdateTime) {
 		super();
 		this.muserName = muserName;
 		this.muserNick = muserNick;

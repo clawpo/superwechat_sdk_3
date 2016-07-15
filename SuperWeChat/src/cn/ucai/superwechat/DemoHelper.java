@@ -642,6 +642,7 @@ public class DemoHelper {
             localUsers.remove(username);
             userDao.deleteContact(username);
             inviteMessgeDao.deleteMessage(username);
+            deleteContactFromAppServer(username);
 
             //发送好友变动广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
@@ -693,6 +694,38 @@ public class DemoHelper {
             // 参考同意，被邀请实现此功能,demo未实现
             Log.d(username, username + "拒绝了你的好友请求");
         }
+    }
+
+    private void deleteContactFromAppServer(final String username) {
+        Log.e(TAG,"deleteContactFromAppServer,usrename="+username);
+        final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+        utils.setRequestUrl(I.REQUEST_DELETE_CONTACT)
+                .addParam(I.Contact.USER_NAME,SuperWeChatApplication.getInstance().getUser().getMUserName())
+                .addParam(I.Contact.CU_NAME,username)
+                .targetClass(String.class)
+                .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Log.e(TAG,"s="+s);
+                        if(s!=null && !s.isEmpty()) {
+                            Result result = Utils.getResultFromJson(s, UserAvatar.class);
+                            Log.e(TAG, "result=" + result);
+                            if (result != null && result.isRetMsg()) {
+                                Log.e(TAG,"1 size="+SuperWeChatApplication.getInstance().getUserList().size());
+                                SuperWeChatApplication.getInstance().getContactList().remove(new UserAvatar(username));
+                                SuperWeChatApplication.getInstance().getUserList().remove(username);
+                                Log.e(TAG,"2 size="+SuperWeChatApplication.getInstance().getUserList().size());
+                            }else{
+                                Log.e(TAG,"error,delete contact fail");
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG,"error="+error);
+                    }
+                });
     }
 
     private void addUserToAddServer(String username) {
