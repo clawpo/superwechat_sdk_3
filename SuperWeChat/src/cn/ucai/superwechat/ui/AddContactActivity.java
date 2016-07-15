@@ -15,6 +15,7 @@ package cn.ucai.superwechat.ui;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -94,6 +95,17 @@ public class AddContactActivity extends BaseActivity{
                 new EaseAlertDialog(this, R.string.not_add_myself).show();
                 return;
             }
+
+            if(DemoHelper.getInstance().getContactList().containsKey(toAddUsername)){
+                //提示已在好友列表中(在黑名单列表里)，无需添加
+                if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(toAddUsername)){
+                    new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
+                    return;
+                }
+                startActivity(new Intent(this,UserProfileActivity.class).putExtra("username",toAddUsername));
+                return;
+            }
+
 			final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
             utils.setRequestUrl(I.REQUEST_FIND_USER)
                     .addParam(I.User.USER_NAME,toAddUsername)
@@ -140,16 +152,7 @@ public class AddContactActivity extends BaseActivity{
 	 */
 	public void addContact(View view){
 
-		
-		if(DemoHelper.getInstance().getContactList().containsKey(nameText.getText().toString())){
-		    //提示已在好友列表中(在黑名单列表里)，无需添加
-		    if(EMClient.getInstance().contactManager().getBlackListUsernames().contains(nameText.getText().toString())){
-		        new EaseAlertDialog(this, R.string.user_already_in_contactlist).show();
-		        return;
-		    }
-			new EaseAlertDialog(this, R.string.This_user_is_already_your_friend).show();
-			return;
-		}
+
 		
 		progressDialog = new ProgressDialog(this);
 		String stri = getResources().getString(R.string.Is_sending_a_request);
