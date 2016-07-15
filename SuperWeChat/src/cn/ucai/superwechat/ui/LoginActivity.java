@@ -18,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -29,6 +30,11 @@ import android.widget.Toast;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.I;
@@ -42,6 +48,7 @@ import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.task.DownloadAllGroupTask;
 import cn.ucai.superwechat.task.DownloadContactListTask;
 import cn.ucai.superwechat.task.DownloadPublicGroupTask;
+import cn.ucai.superwechat.utils.UserUtils;
 import cn.ucai.superwechat.utils.Utils;
 
 /**
@@ -168,51 +175,7 @@ public class LoginActivity extends BaseActivity {
 				//异步获取当前用户的昵称和头像(从自己服务器获取，demo使用的一个第三方服务)
 				DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
 
-                final OkHttpUtils2<String> utils = new OkHttpUtils2<String>();
-                utils.setRequestUrl(I.REQUEST_LOGIN)
-                        .addParam(I.User.USER_NAME,currentUsername)
-                        .addParam(I.User.PASSWORD,currentPassword)
-                        .targetClass(String.class)
-                        .execute(new OkHttpUtils2.OnCompleteListener<String>() {
-                            @Override
-                            public void onSuccess(String s) {
-                                Log.e(TAG,"result="+s);
-                                if(s!=null && !s.isEmpty()){
-                                    Result result = Utils.getResultFromJson(s,UserAvatar.class);
-                                    Log.e(TAG,"useravatar="+result);
-                                    if(result.isRetMsg()) {
-                                        UserAvatar user = (UserAvatar) result.getRetData();
-                                        SuperWeChatApplication.getInstance().setUser(user);
-                                        Log.e(TAG, "user=" + SuperWeChatApplication.getInstance().getUser());
-                                        EMUserDao dao = new EMUserDao(LoginActivity.this);
-                                        dao.saveUser(user);
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Log.e(TAG,"start download contact,group,public group");
-                                                //下载联系人集合
-                                                new DownloadContactListTask(LoginActivity.this,currentUsername).execute();
-                                                //下载群组集合
-                                                new DownloadAllGroupTask(LoginActivity.this,currentUsername).execute();
-                                                //下载公开群组集合
-                                                new DownloadPublicGroupTask(LoginActivity.this,currentUsername,
-                                                        I.PAGE_ID_DEFAULT,I.PAGE_SIZE_DEFAULT).execute();
-                                            }
-                                        });
-                                    }else{
-                                        Log.e(TAG, "error=" + result.getRetCode());
-                                        Toast.makeText(getApplicationContext(), Utils.getResourceString(LoginActivity.this,result.getRetCode()), Toast.LENGTH_SHORT).show();
-                                    }
-                                }else{
-                                    Toast.makeText(getApplicationContext(), getString(R.string.Login_failed),Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                Log.e(TAG,"error="+error);
-                            }
-                        });
+                loginAppServer();
 
 				// 进入主页面
 				Intent intent = new Intent(LoginActivity.this,
@@ -244,8 +207,95 @@ public class LoginActivity extends BaseActivity {
 		});
 	}
 
-	
-	/**
+    private void loginAppServer() {
+        final OkHttpUtils2<String> utils = new OkHttpUtils2<String>();
+        utils.setRequestUrl(I.REQUEST_LOGIN)
+                .addParam(I.User.USER_NAME,currentUsername)
+                .addParam(I.User.PASSWORD,currentPassword)
+                .targetClass(String.class)
+                .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Log.e(TAG,"result="+s);
+                        if(s!=null && !s.isEmpty()){
+                            Result result = Utils.getResultFromJson(s,UserAvatar.class);
+                            Log.e(TAG,"useravatar="+result);
+                            if(result.isRetMsg()) {
+                                UserAvatar user = (UserAvatar) result.getRetData();
+                                SuperWeChatApplication.getInstance().setUser(user);
+                                Log.e(TAG, "user=" + SuperWeChatApplication.getInstance().getUser());
+                                EMUserDao dao = new EMUserDao(LoginActivity.this);
+                                dao.saveUser(user);
+
+//                                DemoHelper.getInstance().getUserProfileManager().updataCurrentUserAvatar(UserUtils.getUserAvatarPath(user));
+                                boolean updatenick = DemoHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(user.getMUserNick());
+                                Log.e(TAG,"update nick="+user.getMUserNick()+",result="+updatenick);
+                                downloadUserAvatarFromAppServer(user);
+//                                Glide.with(getApplicationContext()).load(UserUtils.getUserAvatarPath(user))
+//                                        .diskCacheStrategy(DiskCacheStrategy.ALL).placeholder(com.hyphenate.easeui.R.drawable.ease_default_avatar);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.e(TAG,"start download contact,group,public group");
+                                        //下载联系人集合
+                                        new DownloadContactListTask(LoginActivity.this,currentUsername).execute();
+                                        //下载群组集合
+                                        new DownloadAllGroupTask(LoginActivity.this,currentUsername).execute();
+                                        //下载公开群组集合
+                                        new DownloadPublicGroupTask(LoginActivity.this,currentUsername,
+                                                I.PAGE_ID_DEFAULT,I.PAGE_SIZE_DEFAULT).execute();
+                                    }
+                                });
+                            }else{
+                                Log.e(TAG, "error=" + result.getRetCode());
+                                Toast.makeText(getApplicationContext(), Utils.getResourceString(LoginActivity.this,result.getRetCode()), Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+                            Toast.makeText(getApplicationContext(), getString(R.string.Login_failed),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG,"error="+error);
+                    }
+                });
+    }
+
+    private void downloadUserAvatarFromAppServer(UserAvatar user) {
+        Log.e(TAG,"start download avatar....");
+        final OkHttpUtils2<Message> utils = new OkHttpUtils2<>();
+        utils.url(UserUtils.getUserAvatarPath(user))
+            .targetClass(Message.class)
+            .doInBackground(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Log.e(TAG,"download avatar fail:"+e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    byte[] data = response.body().bytes();
+                    Log.e(TAG,"data="+data);
+                    String avatar = DemoHelper.getInstance().getUserProfileManager().uploadUserAvatar(data);
+                    Log.e(TAG,"download avatar,"+avatar);
+                }
+            })
+        .execute(new OkHttpUtils2.OnCompleteListener<Message>() {
+            @Override
+            public void onSuccess(Message result) {
+                Log.e(TAG,"resule="+result);
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG,"download avatar error:"+error);
+            }
+        });
+    }
+
+
+    /**
 	 * 注册
 	 * 
 	 * @param view

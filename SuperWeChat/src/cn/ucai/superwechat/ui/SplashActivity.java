@@ -18,6 +18,7 @@ import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.task.DownloadAllGroupTask;
 import cn.ucai.superwechat.task.DownloadContactListTask;
 import cn.ucai.superwechat.task.DownloadPublicGroupTask;
+import cn.ucai.superwechat.utils.UserUtils;
 
 /**
  * 开屏页
@@ -55,6 +56,9 @@ public class SplashActivity extends BaseActivity {
             EMUserDao dao = new EMUserDao(SplashActivity.this);
             UserAvatar currentUser = dao.getUser(username);
             Log.e(TAG,"currentUser="+currentUser);
+            DemoHelper.getInstance().getUserProfileManager().updataCurrentUserAvatar(UserUtils.getUserAvatarPath(currentUser));
+			boolean updatenick = DemoHelper.getInstance().getUserProfileManager().updateCurrentUserNickName(currentUser.getMUserNick());
+            Log.e(TAG,"update nick="+currentUser.getMUserNick()+",result="+updatenick);
             SuperWeChatApplication.getInstance().setUser(currentUser);
             new DownloadContactListTask(SplashActivity.this,username).execute();
             new DownloadAllGroupTask(SplashActivity.this,username).execute();

@@ -1,15 +1,16 @@
 package cn.ucai.superwechat.parse;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
 
 import com.hyphenate.EMValueCallBack;
 import com.hyphenate.chat.EMClient;
-import cn.ucai.superwechat.DemoHelper;
-import cn.ucai.superwechat.utils.PreferenceManager;
 import com.hyphenate.easeui.domain.EaseUser;
 
-import android.content.Context;
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.utils.PreferenceManager;
 
 public class UserProfileManager {
 
@@ -130,6 +131,12 @@ public class UserProfileManager {
 		}
 		return isSuccess;
 	}
+
+	public void updataCurrentUserAvatar(String avatar){
+        if (avatar != null) {
+            setCurrentUserAvatar(avatar);
+        }
+    }
 
 	public String uploadUserAvatar(byte[] data) {
 		String avatarUrl = ParseManager.getInstance().uploadParseAvatar(data);
