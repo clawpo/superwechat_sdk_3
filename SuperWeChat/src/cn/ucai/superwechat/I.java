@@ -146,7 +146,7 @@ public interface I {
     /** 客户端上传头像的请求 */
     String REQUEST_UPLOAD_AVATAR 					        = 		"upload_avatar";
     /** 客户端更新用户昵称的请求 */
-    String REQUEST_UPDATE_USER_NICK 				        = 		"update_nick";
+    String REQUEST_UPDATE_USER_NICK 				        = 		"updateNick";
     /** 客户端修改密码的请求 */
     String REQUEST_UPDATE_USER_PASSWORD 			        = 		"update_password";
     /** 客户端发送的登陆请求 */
