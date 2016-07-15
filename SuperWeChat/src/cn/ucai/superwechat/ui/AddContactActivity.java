@@ -17,6 +17,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -26,14 +27,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.widget.EaseAlertDialog;
 
 import cn.ucai.superwechat.DemoHelper;
+import cn.ucai.superwechat.I;
 import cn.ucai.superwechat.R;
+import cn.ucai.superwechat.bean.Result;
+import cn.ucai.superwechat.bean.UserAvatar;
+import cn.ucai.superwechat.data.OkHttpUtils2;
+import cn.ucai.superwechat.utils.UserUtils;
+import cn.ucai.superwechat.utils.Utils;
 
 public class AddContactActivity extends BaseActivity{
-	private EditText editText;
+	private static final String TAG = AddContactActivity.class.getSimpleName();
+    private EditText editText;
 	private LinearLayout searchedUserLayout;
 	private TextView nameText,mTextView;
 	private Button searchBtn;
@@ -42,6 +52,8 @@ public class AddContactActivity extends BaseActivity{
 	private String toAddUsername;
 	private ProgressDialog progressDialog;
 
+    private TextView mtvNothing;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,6 +61,7 @@ public class AddContactActivity extends BaseActivity{
 		mTextView = (TextView) findViewById(R.id.add_list_friends);
 		
 		editText = (EditText) findViewById(R.id.edit_note);
+        mtvNothing = (TextView) findViewById(R.id.tv_show_nothing);
 		String strAdd = getResources().getString(R.string.add_friend);
 		mTextView.setText(strAdd);
 		String strUserName = getResources().getString(R.string.user_name);
@@ -71,16 +84,52 @@ public class AddContactActivity extends BaseActivity{
 		
 		if (getString(R.string.button_search).equals(saveText)) {
 			toAddUsername = name;
+            Log.e(TAG,"name="+toAddUsername);
 			if(TextUtils.isEmpty(name)) {
 				new EaseAlertDialog(this, R.string.Please_enter_a_username).show();
 				return;
 			}
+
+            if(EMClient.getInstance().getCurrentUser().equals(name)){
+                new EaseAlertDialog(this, R.string.not_add_myself).show();
+                return;
+            }
+			final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+            utils.setRequestUrl(I.REQUEST_FIND_USER)
+                    .addParam(I.User.USER_NAME,toAddUsername)
+                    .targetClass(String.class)
+                    .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                        @Override
+                        public void onSuccess(String s) {
+                            Log.e(TAG,"s="+s);
+                            if(s!=null && !s.isEmpty()) {
+                                Result result = Utils.getResultFromJson(s, UserAvatar.class);
+                                Log.e(TAG,"result="+result);
+                                if(result!=null && result.isRetMsg()){
+                                    searchedUserLayout.setVisibility(View.VISIBLE);
+                                    mtvNothing.setVisibility(View.GONE);
+                                    UserAvatar user = (UserAvatar) result.getRetData();
+                                    nameText.setText(user.getMUserNick());
+                                    Glide.with(getApplicationContext()).load(UserUtils.getUserAvatarPathByUserName(user.getMUserName())).diskCacheStrategy(DiskCacheStrategy.ALL).into(avatar);
+                                }else{
+                                    searchedUserLayout.setVisibility(View.GONE);
+                                    mtvNothing.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            Log.e(TAG,"error="+error);
+                            searchedUserLayout.setVisibility(View.GONE);
+                            mtvNothing.setVisibility(View.VISIBLE);
+                        }
+                    });
 			
-			// TODO 从服务器获取此contact,如果不存在提示不存在此用户
-			
-			//服务器存在此用户，显示此用户和添加按钮
-			searchedUserLayout.setVisibility(View.VISIBLE);
-			nameText.setText(toAddUsername);
+//			//服务器存在此用户，显示此用户和添加按钮
+//			searchedUserLayout.setVisibility(View.VISIBLE);
+//			nameText.setText(toAddUsername);
 			
 		} 
 	}	
@@ -90,10 +139,7 @@ public class AddContactActivity extends BaseActivity{
 	 * @param view
 	 */
 	public void addContact(View view){
-		if(EMClient.getInstance().getCurrentUser().equals(nameText.getText().toString())){
-			new EaseAlertDialog(this, R.string.not_add_myself).show();
-			return;
-		}
+
 		
 		if(DemoHelper.getInstance().getContactList().containsKey(nameText.getText().toString())){
 		    //提示已在好友列表中(在黑名单列表里)，无需添加

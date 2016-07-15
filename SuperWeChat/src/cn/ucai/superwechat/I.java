@@ -162,7 +162,7 @@ public interface I {
     /** 客户端发送的添加联系人请求 */
     String REQUEST_ADD_CONTACT 						        = 		"add_contact";
     /** 客户端发送的查找用户请求 */
-    String REQUEST_FIND_USER 						        = 		"find_user";
+    String REQUEST_FIND_USER 						        = 		"findUserByUserName";
     /** 客户端发送的根据用户或昵称模糊查找用户请求 */
     String REQUEST_FIND_USERS_FOR_SEARCH			        = 		"find_users_for_search";
     /** 客户端发送的上传位置请求 */

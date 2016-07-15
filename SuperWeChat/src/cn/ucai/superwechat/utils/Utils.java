@@ -82,22 +82,27 @@ public class Utils {
             JSONObject jsonObject = new JSONObject(jsonStr);
             result.setRetCode(jsonObject.getInt("retCode"));
             result.setRetMsg(jsonObject.getBoolean("retMsg"));
-            JSONObject jsonRetData = jsonObject.getJSONObject("retData");
-            Log.e("Utils","jsonRetData="+jsonRetData);
-            String date;
-            try {
-                date = URLDecoder.decode(jsonRetData.toString(),I.UTF_8);
-                Log.e("Utils","jsonRetData="+date);
-                T t = new Gson().fromJson(date,clazz);
-                result.setRetData(t);
-                return result;
+            if(!jsonObject.isNull("retData")) {
+                JSONObject jsonRetData = jsonObject.getJSONObject("retData");
+                if (jsonRetData != null) {
+                    Log.e("Utils", "jsonRetData=" + jsonRetData);
+                    String date;
+                    try {
+                        date = URLDecoder.decode(jsonRetData.toString(), I.UTF_8);
+                        Log.e("Utils", "jsonRetData=" + date);
+                        T t = new Gson().fromJson(date, clazz);
+                        result.setRetData(t);
+                        return result;
 
-            } catch (UnsupportedEncodingException e1) {
-                e1.printStackTrace();
-                T t = new Gson().fromJson(jsonRetData.toString(),clazz);
-                result.setRetData(t);
-                return result;
+                    } catch (UnsupportedEncodingException e1) {
+                        e1.printStackTrace();
+                        T t = new Gson().fromJson(jsonRetData.toString(), clazz);
+                        result.setRetData(t);
+                        return result;
+                    }
+                }
             }
+            return result;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -111,14 +116,19 @@ public class Utils {
             JSONObject jsonObject = new JSONObject(jsonStr);
             result.setRetCode(jsonObject.getInt("retCode"));
             result.setRetMsg(jsonObject.getBoolean("retMsg"));
-            JSONArray array = jsonObject.getJSONArray("retData");
-            List<T> list = new ArrayList<T>();
-            for(int i=0;i<array.length();i++){
-                JSONObject jsonGroupAvatar = array.getJSONObject(i);
-                T ga = new Gson().fromJson(jsonGroupAvatar.toString(),clazz);
-                list.add(ga);
+            if(!jsonObject.isNull("retData")) {
+                JSONArray array = jsonObject.getJSONArray("retData");
+                if (array != null) {
+                    List<T> list = new ArrayList<T>();
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject jsonGroupAvatar = array.getJSONObject(i);
+                        T ga = new Gson().fromJson(jsonGroupAvatar.toString(), clazz);
+                        list.add(ga);
+                    }
+                    result.setRetData(list);
+                    return result;
+                }
             }
-            result.setRetData(list);
             return result;
         }catch (Exception e){
             e.printStackTrace();
@@ -132,19 +142,24 @@ public class Utils {
             JSONObject jsonObject = new JSONObject(jsonStr);
             result.setRetCode(jsonObject.getInt("retCode"));
             result.setRetMsg(jsonObject.getBoolean("retMsg"));
-            JSONObject jsonPager = jsonObject.getJSONObject("retData");
-            Pager pager = new Pager();
-            pager.setCurrentPage(jsonPager.getInt("currentPage"));
-            pager.setMaxRecord(jsonPager.getInt("maxRecord"));
-            JSONArray array = jsonPager.getJSONArray("pageData");
-            List<T> list = new ArrayList<T>();
-            for(int i=0;i<array.length();i++){
-                JSONObject jsonGroupAvatar = array.getJSONObject(i);
-                T ga = new Gson().fromJson(jsonGroupAvatar.toString(),clazz);
-                list.add(ga);
+            if(!jsonObject.isNull("retData")) {
+                JSONObject jsonPager = jsonObject.getJSONObject("retData");
+                if (jsonPager != null) {
+                    Pager pager = new Pager();
+                    pager.setCurrentPage(jsonPager.getInt("currentPage"));
+                    pager.setMaxRecord(jsonPager.getInt("maxRecord"));
+                    JSONArray array = jsonPager.getJSONArray("pageData");
+                    List<T> list = new ArrayList<T>();
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject jsonGroupAvatar = array.getJSONObject(i);
+                        T ga = new Gson().fromJson(jsonGroupAvatar.toString(), clazz);
+                        list.add(ga);
+                    }
+                    pager.setPageData(list);
+                    result.setRetData(pager);
+                    return result;
+                }
             }
-            pager.setPageData(list);
-            result.setRetData(pager);
             return result;
         }catch (Exception e){
             e.printStackTrace();
