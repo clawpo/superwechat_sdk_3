@@ -47,7 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.bean.UserAvatar;
+import cn.ucai.superwechat.data.OkHttpUtils2;
 import cn.ucai.superwechat.db.DemoDBManager;
 import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.db.InviteMessgeDao;
@@ -63,6 +65,7 @@ import cn.ucai.superwechat.ui.VideoCallActivity;
 import cn.ucai.superwechat.ui.VoiceCallActivity;
 import cn.ucai.superwechat.utils.PreferenceManager;
 import cn.ucai.superwechat.utils.UserUtils;
+import cn.ucai.superwechat.utils.Utils;
 
 public class DemoHelper {
     /**
@@ -611,9 +614,11 @@ public class DemoHelper {
 
         @Override
         public void onContactAdded(String username) {
+            Log.e(TAG,"onContactAdded,username="+username);
             // 保存增加的联系人
             Map<String, EaseUser> localUsers = getContactList();
             Map<String, EaseUser> toAddUsers = new HashMap<String, EaseUser>();
+            HashMap<String, UserAvatar> userList = SuperWeChatApplication.getInstance().getUserList();
             EaseUser user = new EaseUser(username);
             // 添加好友时可能会回调added方法两次
             if (!localUsers.containsKey(username)) {
@@ -621,6 +626,9 @@ public class DemoHelper {
             }
             toAddUsers.put(username, user);
             localUsers.putAll(toAddUsers);
+            if(!userList.containsKey(username)){
+                addUserToAddServer(username);
+            }
 
            //发送好友变动广播
             broadcastManager.sendBroadcast(new Intent(Constant.ACTION_CONTACT_CHANAGED));
@@ -628,6 +636,7 @@ public class DemoHelper {
 
         @Override
         public void onContactDeleted(String username) {
+            Log.e(TAG,"onContactDeleted,username="+username);
             // 被删除
             Map<String, EaseUser> localUsers = DemoHelper.getInstance().getContactList();
             localUsers.remove(username);
@@ -662,6 +671,7 @@ public class DemoHelper {
 
         @Override
         public void onContactAgreed(String username) {
+            Log.e(TAG,"onContactAgreed,username="+username);
             List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
             for (InviteMessage inviteMessage : msgs) {
                 if (inviteMessage.getFrom().equals(username)) {
@@ -684,7 +694,40 @@ public class DemoHelper {
             Log.d(username, username + "拒绝了你的好友请求");
         }
     }
-    
+
+    private void addUserToAddServer(String username) {
+        Log.e(TAG,"addUserToAddServer,usrename="+username);
+        final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+        utils.setRequestUrl(I.REQUEST_ADD_CONTACT)
+                .addParam(I.Contact.USER_NAME,SuperWeChatApplication.getInstance().getUser().getMUserName())
+                .addParam(I.Contact.CU_NAME,username)
+                .targetClass(String.class)
+                .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String s) {
+                        Log.e(TAG,"s="+s);
+                        if(s!=null && !s.isEmpty()) {
+                            Result result = Utils.getResultFromJson(s, UserAvatar.class);
+                            Log.e(TAG,"result="+result);
+                            if(result!=null && result.isRetMsg()){
+                                UserAvatar user = (UserAvatar) result.getRetData();
+                                Log.e(TAG,"1 size="+SuperWeChatApplication.getInstance().getUserList().size());
+                                SuperWeChatApplication.getInstance().getUserList().put(user.getMUserName(),user);
+                                SuperWeChatApplication.getInstance().getContactList().add(user);
+                                Log.e(TAG,"2 size="+SuperWeChatApplication.getInstance().getUserList().size());
+                            }else{
+                                Log.e(TAG,"add fail,error="+Utils.getResourceString(appContext,result.getRetCode()));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Log.e(TAG,"error="+error);
+                    }
+                });
+    }
+
     /**
      * 保存并提示消息的邀请消息
      * @param msg

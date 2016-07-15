@@ -160,7 +160,7 @@ public interface I {
     /** 客户端发送的删除联系人请求 */
     String REQUEST_DELETE_CONTACT 					        = 		"delete_contact";
     /** 客户端发送的添加联系人请求 */
-    String REQUEST_ADD_CONTACT 						        = 		"add_contact";
+    String REQUEST_ADD_CONTACT 						        = 		"addContact";
     /** 客户端发送的查找用户请求 */
     String REQUEST_FIND_USER 						        = 		"findUserByUserName";
     /** 客户端发送的根据用户或昵称模糊查找用户请求 */
