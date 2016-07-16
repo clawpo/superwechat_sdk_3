@@ -413,4 +413,11 @@ public class DemoDBManager {
         }
         return user;
     }
+
+    synchronized public void updateUser(UserAvatar user){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        if(db.isOpen()){
+            db.update(EMUserDao.USER_TABLE_NAME, null, EMUserDao.USER_COLUMN_NAME_ID + " = ?", new String[]{user.getMUserName()});
+        }
+    }
 }

@@ -28,6 +28,7 @@ import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.utils.EaseUserUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import cn.ucai.superwechat.DemoHelper;
 import cn.ucai.superwechat.I;
@@ -36,6 +37,7 @@ import cn.ucai.superwechat.SuperWeChatApplication;
 import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.data.OkHttpUtils2;
+import cn.ucai.superwechat.db.EMUserDao;
 import cn.ucai.superwechat.utils.Utils;
 
 public class UserProfileActivity extends BaseActivity implements OnClickListener{
@@ -194,6 +196,8 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                             if (result.isRetMsg()) {
                                 UserAvatar user = (UserAvatar) result.getRetData();
                                 SuperWeChatApplication.getInstance().setUser(user);
+                                EMUserDao dao = new EMUserDao(UserProfileActivity.this);
+                                dao.saveUser(user);
                                 updateRemoteNick(nickName);
                             }
                         }
@@ -281,14 +285,39 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		Bundle extras = picdata.getExtras();
 		if (extras != null) {
 			Bitmap photo = extras.getParcelable("data");
+            updateAppServerAvatar(photo);
 			Drawable drawable = new BitmapDrawable(getResources(), photo);
 			headAvatar.setImageDrawable(drawable);
-			uploadUserAvatar(Bitmap2Bytes(photo));
+//			uploadUserAvatar(Bitmap2Bytes(photo));
 		}
 
 	}
-	
-	private void uploadUserAvatar(final byte[] data) {
+
+    private void updateAppServerAvatar(Bitmap photo) {
+        final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+        utils.setRequestUrl(I.REQUEST_UPLOAD_AVATAR)
+                .addParam(I.AVATAR_TYPE,I.AVATAR_TYPE_USER_PATH)
+                .addParam(I.NAME_OR_HXID,SuperWeChatApplication.getInstance().getUser().getMUserName())
+                .targetClass(String.class)
+                .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+
+                    }
+                });
+    }
+
+    private File getFileFromBitmap(Bitmap photo){
+        File file = null;//new File();
+        return file;
+    }
+
+    private void uploadUserAvatar(final byte[] data) {
 		dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
 		new Thread(new Runnable() {
 
