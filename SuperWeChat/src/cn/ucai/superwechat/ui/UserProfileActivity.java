@@ -197,7 +197,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
                                 UserAvatar user = (UserAvatar) result.getRetData();
                                 SuperWeChatApplication.getInstance().setUser(user);
                                 EMUserDao dao = new EMUserDao(UserProfileActivity.this);
-                                dao.saveUser(user);
+                                dao.updateUser(user);
                                 updateRemoteNick(nickName);
                             }
                         }

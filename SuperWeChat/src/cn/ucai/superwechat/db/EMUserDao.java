@@ -117,4 +117,8 @@ public class EMUserDao {
     public UserAvatar getUser(String username){
         return DemoDBManager.getInstance().getUser(username);
     }
+
+	public void updateUser(UserAvatar user) {
+		DemoDBManager.getInstance().updateUser(user);
+	}
 }

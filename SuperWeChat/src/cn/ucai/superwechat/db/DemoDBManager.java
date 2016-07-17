@@ -417,7 +417,9 @@ public class DemoDBManager {
     synchronized public void updateUser(UserAvatar user){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         if(db.isOpen()){
-            db.update(EMUserDao.USER_TABLE_NAME, null, EMUserDao.USER_COLUMN_NAME_ID + " = ?", new String[]{user.getMUserName()});
+            ContentValues values = new ContentValues();
+            values.put(EMUserDao.USER_COLUMN_NAME_NICK,user.getMUserNick());
+            db.update(EMUserDao.USER_TABLE_NAME, values, EMUserDao.USER_COLUMN_NAME_ID + " = ?", new String[]{user.getMUserName()});
         }
     }
 }
