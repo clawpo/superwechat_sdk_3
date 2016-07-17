@@ -286,7 +286,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		Bundle extras = picdata.getExtras();
 		if (extras != null) {
 			Bitmap photo = extras.getParcelable("data");
-            updateAppServerAvatar(picdata);
+            updateAppServerAvatar(picdata,photo);
 			Drawable drawable = new BitmapDrawable(getResources(), photo);
 			headAvatar.setImageDrawable(drawable);
 //			uploadUserAvatar(Bitmap2Bytes(photo));
@@ -295,34 +295,46 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 	}
 
 
-    private void updateAppServerAvatar(Intent picdata) {
+    private void updateAppServerAvatar(Intent picdata,final Bitmap photo) {
         File file = OnSetAvatarListener.saveCropAndShowAvatar(picdata,UserProfileActivity.this,I.AVATAR_TYPE_USER_PATH,
                 SuperWeChatApplication.getInstance().getUser().getMUserName());
+        dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
+        dialog.show();
         if(file!=null && file.exists()) {
-            final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+            final OkHttpUtils2<Result> utils = new OkHttpUtils2<>();
             utils.setRequestUrl(I.REQUEST_UPLOAD_AVATAR)
                     .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
                     .addParam(I.NAME_OR_HXID, SuperWeChatApplication.getInstance().getUser().getMUserName())
                     .addFile(file)
-                    .targetClass(String.class)
-                    .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                    .targetClass(Result.class)
+                    .execute(new OkHttpUtils2.OnCompleteListener<Result>() {
                         @Override
-                        public void onSuccess(String result) {
+                        public void onSuccess(Result result) {
                             Log.e(TAG,"result="+result);
+                            if(result!=null && result.isRetMsg()) {
+                                uploadUserAvatar(Bitmap2Bytes(photo));
+                            }else{
+                                Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatephoto_fail),
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
                         public void onError(String error) {
                             Log.e(TAG,"error="+error);
+                            Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatephoto_fail),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
         }else{
             Log.e(TAG,"file is not exists");
+            Toast.makeText(UserProfileActivity.this, getString(R.string.toast_updatephoto_fail),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private void uploadUserAvatar(final byte[] data) {
-		dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
+//		dialog = ProgressDialog.show(this, getString(R.string.dl_update_photo), getString(R.string.dl_waiting));
 		new Thread(new Runnable() {
 
 			@Override
@@ -346,7 +358,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 			}
 		}).start();
 
-		dialog.show();
+//		dialog.show();
 	}
 	
 	
