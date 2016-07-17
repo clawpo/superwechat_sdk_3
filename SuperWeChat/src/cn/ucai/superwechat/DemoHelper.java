@@ -818,6 +818,7 @@ public class DemoHelper {
             user.setNick(userAvatar.getMUserNick());
         }
         String avatar = UserUtils.getUserAvatarPathByUserName(username);
+        Log.e(TAG,"avatar="+avatar);
         user.setAvatar(avatar);
         return user;
 	}

@@ -139,6 +139,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 				        return;
 				    }
 					tvNickName.setText(user.getNick());
+                    Log.e(TAG,"user.avatar="+user.getAvatar());
 					if(!TextUtils.isEmpty(user.getAvatar())){
 						 Glide.with(UserProfileActivity.this).load(user.getAvatar()).placeholder(R.drawable.em_default_avatar).into(headAvatar);
 					}else{
