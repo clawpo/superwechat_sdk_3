@@ -38,6 +38,7 @@ import cn.ucai.superwechat.bean.Result;
 import cn.ucai.superwechat.bean.UserAvatar;
 import cn.ucai.superwechat.data.OkHttpUtils2;
 import cn.ucai.superwechat.db.EMUserDao;
+import cn.ucai.superwechat.listener.OnSetAvatarListener;
 import cn.ucai.superwechat.utils.Utils;
 
 public class UserProfileActivity extends BaseActivity implements OnClickListener{
@@ -285,7 +286,7 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 		Bundle extras = picdata.getExtras();
 		if (extras != null) {
 			Bitmap photo = extras.getParcelable("data");
-            updateAppServerAvatar(photo);
+            updateAppServerAvatar(picdata);
 			Drawable drawable = new BitmapDrawable(getResources(), photo);
 			headAvatar.setImageDrawable(drawable);
 //			uploadUserAvatar(Bitmap2Bytes(photo));
@@ -293,28 +294,31 @@ public class UserProfileActivity extends BaseActivity implements OnClickListener
 
 	}
 
-    private void updateAppServerAvatar(Bitmap photo) {
-        final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
-        utils.setRequestUrl(I.REQUEST_UPLOAD_AVATAR)
-                .addParam(I.AVATAR_TYPE,I.AVATAR_TYPE_USER_PATH)
-                .addParam(I.NAME_OR_HXID,SuperWeChatApplication.getInstance().getUser().getMUserName())
-                .targetClass(String.class)
-                .execute(new OkHttpUtils2.OnCompleteListener<String>() {
-                    @Override
-                    public void onSuccess(String result) {
 
-                    }
+    private void updateAppServerAvatar(Intent picdata) {
+        File file = OnSetAvatarListener.saveCropAndShowAvatar(picdata,UserProfileActivity.this,I.AVATAR_TYPE_USER_PATH,
+                SuperWeChatApplication.getInstance().getUser().getMUserName());
+        if(file!=null && file.exists()) {
+            final OkHttpUtils2<String> utils = new OkHttpUtils2<>();
+            utils.setRequestUrl(I.REQUEST_UPLOAD_AVATAR)
+                    .addParam(I.AVATAR_TYPE, I.AVATAR_TYPE_USER_PATH)
+                    .addParam(I.NAME_OR_HXID, SuperWeChatApplication.getInstance().getUser().getMUserName())
+                    .addFile(file)
+                    .targetClass(String.class)
+                    .execute(new OkHttpUtils2.OnCompleteListener<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            Log.e(TAG,"result="+result);
+                        }
 
-                    @Override
-                    public void onError(String error) {
-
-                    }
-                });
-    }
-
-    private File getFileFromBitmap(Bitmap photo){
-        File file = null;//new File();
-        return file;
+                        @Override
+                        public void onError(String error) {
+                            Log.e(TAG,"error="+error);
+                        }
+                    });
+        }else{
+            Log.e(TAG,"file is not exists");
+        }
     }
 
     private void uploadUserAvatar(final byte[] data) {

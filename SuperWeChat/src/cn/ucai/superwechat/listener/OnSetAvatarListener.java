@@ -215,6 +215,32 @@ public class OnSetAvatarListener implements View.OnClickListener {
     }
 
     /**
+     * 保存头像至sd卡的Android文件夹
+     * @param data
+     */
+    public static File saveCropAndShowAvatar(Intent data,Activity context,String avatarType,String avatarName) {
+        Bundle extras = data.getExtras();
+        Bitmap avatar = extras.getParcelable("data");
+        if (avatar == null) {
+            return null;
+        }
+        File file = FileUtils.getAvatarPath(context,avatarType, avatarName + ".jpg");
+        if(!file.getParentFile().exists()){
+            Toast.makeText(context, "照片保存失败,保存的路径不存在", Toast.LENGTH_LONG).show();
+            return null;
+        }
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            avatar.compress(Bitmap.CompressFormat.JPEG,100,out);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("main", "头像保存失败");
+        }
+        return file;
+    }
+
+    /**
      * 启动裁剪的Activity
      * @param uri
      * @param outputX
